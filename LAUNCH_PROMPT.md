@@ -1,23 +1,11 @@
-# Luna implementation prompt
+Implement from the current JAKE DRIVE repository/package directly. Do not redesign it and do not consult older packages.
 
-Work directly in this repository. Do not create a new parallel project and do not import any older JAKE DRIVE package.
+Read START_HERE.md and DESIGN_MASTER.md first. The target is the approved PURE landscape shot: centered hero speed, no km/h/tach/cards/Union Jack, small gear at hero lower-right, small green MINI companion car on the right-lower roadway, wet arched tunnel, and dark 0/1 rain derived from “一路平安”.
 
-Read `START_HERE.md` and follow its reading order. Treat `Reference/APPROVED.png` as the minimum visual-quality benchmark, but never use it as a runtime full-screen background.
+Use the existing Swift + Metal renderer. Preserve the exact camera, timing, material, car-master, glyph and render-pass contracts. Do not substitute a generic font; do not re-cut the vehicle from brightness; do not blur the hero speed/gear; do not infer gear/brake.
 
-Your first milestone is the cinematic PURE Metal renderer. Do not start BLE integration until the PURE visual baseline is objectively reviewed.
+First milestone on Mac/iPhone is compilation + native visual evidence for 0/20/72/88/100/128 and all G-buffer debug modes. If visual output is below Reference/APPROVED.png, improve the existing scene/material/shader path before BLE work.
 
-You must use the checked-in source assets and generation pipeline. Do not guess a replacement speed font, vehicle silhouette, material color, camera composition or animation hierarchy.
+Binary art masters are in the final distribution archive and have SHA-256 values documented in Source/Vehicle/README.md. Missing binary masters are not permission to generate placeholders.
 
-Mandatory behavior:
-- landscape only
-- centered hero speed
-- small gear lower-right of speed
-- dark upper-half binary rain encoded from `一路平安`
-- small green companion car grounded in the right-lower road scene
-- no km/h, tachometer, flag, large title or permanent navigation in PURE
-- background motion freezes at 0 km/h
-- higher speed increases actual spatial travel/exposure blur, not arbitrary CSS-like animation speed
-- hero speed and gear remain razor-sharp after all background post-processing
-- brake and exact gear stay unknown unless supplied by a trusted telemetry source
-
-Use `docs/11_RENDER_PASSES.md` as the render graph contract and `docs/12_LUNA_EXECUTION.md` as the execution/acceptance contract.
+Report actual commands and PASS/FAIL/NOT RUN. Never call Linux parsing an Apple build and never claim 60fps/visual acceptance without native evidence.
