@@ -71,47 +71,22 @@ def build_materials():
     save('flow_noise',np.dstack(noise+[np.ones_like(noise[0])]))
 
 def build_car():
-    src=Image.open(S/'Vehicle/rear_original.png').convert('RGB')
-    rgb=np.asarray(src,dtype=np.float32)/255
-    regs=json.loads((S/'Vehicle/registration.json').read_text())
-    alpha=mask(regs['silhouette'],blur=.22)
-    for polygon in regs['cutouts']: alpha*=1-mask(polygon,blur=.20)
-    body=np.maximum.reduce([mask(p,blur=1)for p in regs['paintPanels']])*alpha
-    red=(rgb[...,0]>rgb[...,1]*1.35)&(rgb[...,0]>rgb[...,2]*1.35)
-    body*=1-red.astype(np.float32)
-    L=linear(rgb);lum=L@np.array([.2126,.7152,.0722])
-    green=np.dstack([lum*.36,lum*.79,lum*.51])
-    mix=body[...,None]*.87
-    out=L*(1-mix)+green*mix
-    lamp=np.maximum.reduce([mask(p,blur=.15)for p in regs['brakeLenses']])*alpha
-    out=out*(1-lamp[...,None]*.82)
-
-    plate=Image.open(S/'Vehicle/plate.png').convert('RGBA')
-    P=np.array(plate,dtype=np.float32)/255
-    M=cv2.getPerspectiveTransform(
-        np.float32([[0,0],[P.shape[1]-1,0],[P.shape[1]-1,P.shape[0]-1],[0,P.shape[0]-1]]),
-        np.float32(regs['plateQuad']))
-    P=np.dstack([linear(P[...,:3])*P[...,3:4],P[...,3]])
-    warped=cv2.warpPerspective(P,M,(676,451),flags=cv2.INTER_LINEAR)
-    out=out*(1-warped[...,3:4])+warped[...,:3]
-
-    rgba=np.dstack([srgb(np.clip(out,0,1)),alpha])
-    em=np.zeros_like(rgba);em[...,0]=1;em[...,1]=.11;em[...,2]=.012;em[...,3]=lamp
-    crop=tuple(regs["crop"])
-    def crop_runtime(a):
-        x0,y0,x1,y1=crop
-        q=resize_srgb_straight(a[y0:y1,x0:x1],(992,542))
-        return Image.fromarray(np.uint8(np.clip(q,0,1)*255+.5),'RGBA')
-    crop_runtime(rgba).save(A/'car_body.png')
-    crop_runtime(em).save(A/'brake_emission.png')
-    glow=gaussian_filter(lamp,3.8);glow/=max(glow.max(),1e-6)
-    em[...,3]=glow*.34;crop_runtime(em).save(A/'brake_halo.png')
-    Image.fromarray(np.uint8(alpha*255)).save(S/'Vehicle/silhouette_mask.png')
-    Image.fromarray(np.uint8(body*255)).save(S/'Vehicle/paint_mask.png')
-    Image.fromarray(np.uint8(lamp*255)).save(S/'Vehicle/brake_mask.png')
-    x,y=np.meshgrid(np.linspace(-1,1,512),np.linspace(-1,1,192))
-    sh=np.exp(-(x*x*3+y*y*8))*.38
+    master=S/'Vehicle/car_master.png'
+    if not master.exists(): raise FileNotFoundError('Source/Vehicle/car_master.png is required; obtain it from the JAKE_DRIVE_CINEMATIC_FINAL distribution package')
+    src=Image.open(master).convert('RGBA');arr=np.asarray(src,dtype=np.float32)/255;alpha=arr[...,3]
+    bbox=src.getchannel('A').getbbox();x0,y0,x1,y1=bbox
+    red=(arr[...,0]>.55)&(arr[...,0]>arr[...,1]*1.45)&(arr[...,0]>arr[...,2]*1.35)&(alpha>.05)
+    region=np.zeros(alpha.shape,bool);region[240:440,1160:1360]=True;region[280:450,1740:1885]=True
+    lamp=(red&region).astype(np.float32);lamp=gaussian_filter(lamp,.55);lamp=np.minimum(lamp,alpha)
+    crop=arr[y0:y1,x0:x1];lampc=lamp[y0:y1,x0:x1]
+    out=resize_srgb_straight(crop,(1400,521));Image.fromarray(np.uint8(np.clip(out,0,1)*255+.5),'RGBA').save(A/'car_body.png')
+    em=np.zeros_like(crop);em[...,0]=1;em[...,1]=.08;em[...,2]=.01;em[...,3]=lampc
+    em=resize_srgb_straight(em,(1400,521));Image.fromarray(np.uint8(np.clip(em,0,1)*255+.5),'RGBA').save(A/'brake_emission.png')
+    halo=gaussian_filter(lampc,8);halo/=max(halo.max(),1e-6);hm=np.zeros_like(crop);hm[...,0]=1;hm[...,1]=.04;hm[...,2]=.01;hm[...,3]=halo*.30
+    hm=resize_srgb_straight(hm,(1400,521));Image.fromarray(np.uint8(np.clip(hm,0,1)*255+.5),'RGBA').save(A/'brake_halo.png')
+    x,y=np.meshgrid(np.linspace(-1,1,512),np.linspace(-1,1,192));sh=np.exp(-(x*x*3+y*y*8))*.36
     save('contact_shadow',np.dstack([np.zeros_like(sh)]*3+[sh]))
+    (S/'Vehicle/runtime_registration.json').write_text(json.dumps({'source':'car_master.png','sourceSize':list(src.size),'alphaBBox':list(bbox),'runtimeSize':[1400,521],'brakeRegionsSource':[[1160,240,1360,440],[1740,280,1885,450]],'note':'explicit tail-lamp regions; silhouette comes from approved alpha, never a brightness threshold'},indent=2))
 
 # JAKE PERFORMANCE GLYPH SYSTEM
 # The shapes are authored vector recipes, not an installed font. All digits share one stroke language.
