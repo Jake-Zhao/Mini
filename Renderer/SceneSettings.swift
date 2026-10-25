@@ -31,6 +31,6 @@ struct SceneSettings: Decodable {
     }
     func carFrame(width: Double,height: Double) -> Rect {
         var c=SceneCamera();c.tanHalfVerticalFOV=camera.tanHalfVerticalFOV;c.eyeHeight=camera.eyeHeightMetres;c.horizon=camera.horizonY
-        return c.vehicleFrame(width:width,height:height,x:vehicle.positionXMetres,z:vehicle.positionZMetres,proxyWidth:vehicle.proxyWidthMetres,contactY:vehicle.contactY)
+        return c.vehicleFrame(width:width,height:height,x:vehicle.positionXMetres,z:vehicle.positionZMetres,proxyWidth:vehicle.proxyWidthMetres,contactY:vehicle.contactY,textureAspect:Double(vehicle.textureWidth)/Double(vehicle.textureHeight))
     }
 }
