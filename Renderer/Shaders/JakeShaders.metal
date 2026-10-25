@@ -13,12 +13,20 @@ vertex ScreenVertex fullscreenVertex(uint vid [[vertex_id]]) {
     float2 v=float2((vid << 1) & 2, vid & 2);
     ScreenVertex out;out.position=float4(v.x*2.0-1.0,1.0-v.y*2.0,0,1);out.uv=v;return out;
 }
-struct SceneAttachments { half4 color [[color(0)]]; half4 motionDepth [[color(1)]]; };
+struct SceneAttachments {
+    half4 color [[color(0)]];
+    half4 motionDepth [[color(1)]];
+    half4 materialData [[color(2)]];
+};
 fragment SceneAttachments sceneFragment(ScreenVertex in [[stage_in]], constant FrameUniforms &u [[buffer(0)]],
     texture2d<float> asphaltColor [[texture(0)]], texture2d<float> asphaltSurface [[texture(1)]],
     texture2d<float> concreteColor [[texture(2)]], texture2d<float> concreteSurface [[texture(3)]], texture2d<float> flowNoise [[texture(4)]]) {
     SceneSample s=jdScene(in.uv,u TEXTURE_ARGUMENTS);
-    SceneAttachments out;out.color=half4(half3(s.color),1);out.motionDepth=half4(half2(s.velocity),half(s.depth),half(s.surface));return out;
+    SceneAttachments out;
+    out.color=half4(half3(s.color),1);
+    out.motionDepth=half4(half2(s.velocity),half(s.depth),half(s.surface));
+    out.materialData=half4(half(s.roughness),half(s.wetness),half(s.objectID),1);
+    return out;
 }
 fragment half4 motionBlurFragment(ScreenVertex in [[stage_in]], constant FrameUniforms &u [[buffer(0)]],
     texture2d<float> color [[texture(0)]], texture2d<float> motion [[texture(1)]]) {
@@ -127,10 +135,15 @@ fragment half4 bloomVerticalFragment(ScreenVertex in [[stage_in]],texture2d<floa
     return half4(half3(c),1);
 }
 fragment half4 outputFragment(ScreenVertex in [[stage_in]],constant FrameUniforms &u [[buffer(0)]],
-    texture2d<float> scene [[texture(0)]],texture2d<float> bloom [[texture(1)]],texture2d<float> motion [[texture(2)]]) {
+    texture2d<float> scene [[texture(0)]],texture2d<float> bloom [[texture(1)]],
+    texture2d<float> motion [[texture(2)]],texture2d<float> material [[texture(3)]]) {
     float3 c=scene.sample(linearSampler,in.uv).rgb+bloom.sample(linearSampler,in.uv).rgb*u.effects.z;
     if(u.flags.z>0.5&&u.flags.z<1.5){float d=motion.sample(linearSampler,in.uv).z/120.0;return half4(half3(d),1);}
     if(u.flags.z>1.5&&u.flags.z<2.5){float2 m=motion.sample(linearSampler,in.uv).xy*60.0;return half4(half(m.x+0.5),half(m.y+0.5),0,1);}
+    float4 mat=material.sample(linearSampler,in.uv);
+    if(u.flags.z>2.5&&u.flags.z<3.5){return half4(half3(mat.xxx),1);}
+    if(u.flags.z>3.5&&u.flags.z<4.5){return half4(half3(mat.yyy),1);}
+    if(u.flags.z>4.5&&u.flags.z<5.5){float id=mat.z;return half4(half(id<.5),half(id>.5),0,1);}
     return half4(half3(jdACES(c*u.optics.y)),1);
 }
 kernel void advanceSpray(device Particle *particles [[buffer(0)]],constant FrameUniforms &u [[buffer(1)]],uint id [[thread_position_in_grid]]){
