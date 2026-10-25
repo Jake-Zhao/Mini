@@ -88,86 +88,61 @@ def build_car():
     save('contact_shadow',np.dstack([np.zeros_like(sh)]*3+[sh]))
     (S/'Vehicle/runtime_registration.json').write_text(json.dumps({'source':'car_master.png','sourceSize':list(src.size),'alphaBBox':list(bbox),'runtimeSize':[1400,521],'brakeRegionsSource':[[1160,240,1360,440],[1740,280,1885,450]],'note':'explicit tail-lamp regions; silhouette comes from approved alpha, never a brightness threshold'},indent=2))
 
-# JAKE PERFORMANCE GLYPH SYSTEM
-# The shapes are authored vector recipes, not an installed font. All digits share one stroke language.
-SEGMENTS={
- 'a':[(95,40),(390,40),(355,95),(115,95)],
- 'g':[(85,220),(350,220),(315,275),(105,275)],
- 'd':[(60,400),(325,400),(285,458),(80,458)],
- 'f':[(90,65),(145,90),(115,225),(62,250)],
- 'b':[(350,70),(405,55),(365,220),(315,245)],
- 'e':[(62,250),(112,225),(80,410),(30,435)],
- 'c':[(315,245),(365,220),(325,410),(275,435)]
-}
-DIGIT_SEGMENTS={
- '0':'ab cdef'.replace(' ',''),'1':'bc','2':'abged'.replace(' ',''),'3':'abgcd',
- '4':'fgbc','5':'afgcd','6':'afgecd','7':'abc','8':'abcdefg','9':'abfgcd'
-}
-def slant(poly,amount=.13):
-    return [(x+amount*(480-y),y) for x,y in poly]
-def performance_mask(glyph,scale=2):
-    W,H=560*scale,480*scale
-    m=Image.new('L',(W,H),0);d=ImageDraw.Draw(m)
-    if glyph in DIGIT_SEGMENTS:
-        for s in DIGIT_SEGMENTS[glyph]:
-            d.polygon([(int(x*scale),int(y*scale)) for x,y in slant(SEGMENTS[s])],fill=255)
-    elif glyph=='-':
-        d.polygon([(int(x*scale),int(y*scale)) for x,y in slant(SEGMENTS['g'])],fill=255)
-    else:
-        # Letters share the same chamfered stroke construction.
-        strokes={
-          'D': ['f','e','a','b','c','d'],
-          'P': ['f','e','a','b','g'],
-          'N': ['f','e','b','c'],
-          'R': ['f','e','a','b','g']
-        }[glyph]
-        for s in strokes:
-            d.polygon([(int(x*scale),int(y*scale)) for x,y in slant(SEGMENTS[s])],fill=255)
-        if glyph in ('N','R'):
-            if glyph=='N': pts=[(115,90),(165,80),(345,405),(290,430)]
-            else: pts=[(220,250),(275,235),(385,430),(325,440)]
-            d.polygon([(int(x*scale),int(y*scale)) for x,y in slant(pts)],fill=255)
-    # deterministic chipped brush edges
-    a=np.asarray(m,dtype=np.float32)/255
-    rng=np.random.default_rng(7000+ord(glyph))
-    grain=gaussian_filter(rng.random(a.shape),1.2)
-    scratches=gaussian_filter(rng.random(a.shape),(.7,8.0))
-    texture=np.clip(.90+.18*grain-.14*(scratches>.57),.55,1)
-    a=np.clip(a*texture,0,1)
-    return a
+# JAKE PERFORMANCE BRUSH GLYPH SYSTEM
+# 7 and 2 are extracted from the approved baseline's painted strokes.
+# Remaining glyphs share the same italic angle, stroke mass and distressed-paint logic.
+def approved_glyph(g):
+    refpath=R/'Reference/APPROVED.png'
+    if not refpath.exists(): raise FileNotFoundError('Reference/APPROVED.png is required from the final distribution package')
+    ref=np.asarray(Image.open(refpath).convert('RGB'),dtype=np.float32)/255
+    boxes={'7':(430,270,875,630),'2':(760,270,1235,630)}
+    x0,y0,x1,y1=boxes[g];crop=ref[y0:y1,x0:x1]
+    mn=crop.min(axis=2);mx=crop.max(axis=2)
+    alpha=np.clip((mn-.24)/.55,0,1)*np.clip(1-(mx-mn)*2.0,0,1)
+    alpha=gaussian_filter(alpha,.45);ys,xs=np.where(alpha>.045)
+    return alpha[max(0,ys.min()-6):ys.max()+7,max(0,xs.min()-6):xs.max()+7]
+
+def path_mask(g,scale=2):
+    W,H=520*scale,480*scale;m=np.zeros((H,W),np.uint8);T=int(82*scale)
+    def line(points,th=T): cv2.polylines(m,[np.array([(int(x*scale),int(y*scale)) for x,y in points],np.int32)],False,255,thickness=th,lineType=cv2.LINE_AA)
+    def ell(center,axes,start=0,end=360,th=T): cv2.ellipse(m,(int(center[0]*scale),int(center[1]*scale)),(int(axes[0]*scale),int(axes[1]*scale)),0,start,end,255,th,lineType=cv2.LINE_AA)
+    if g=='0': ell((255,240),(145,180))
+    elif g=='1': line([(175,125),(285,58),(220,430)]);line([(145,430),(315,430)],int(58*scale))
+    elif g=='3': line([(110,80),(315,65),(360,130),(255,225),(345,250),(350,350),(295,410),(90,420)])
+    elif g=='4': line([(300,55),(85,285),(350,285)]);line([(300,55),(230,430)])
+    elif g=='5': line([(360,70),(120,70),(95,225),(295,225),(350,275),(340,365),(285,420),(85,420)])
+    elif g=='6': ell((235,315),(135,115));line([(350,80),(205,75),(105,175),(95,315)])
+    elif g=='8': ell((245,145),(115,90));ell((235,340),(135,105));line([(335,205),(135,275)],int(66*scale))
+    elif g=='9': ell((250,165),(135,110));line([(370,170),(340,325),(280,415),(115,420)])
+    elif g=='-': line([(100,255),(360,255)],int(58*scale))
+    elif g=='D': line([(105,65),(90,420)]);line([(105,70),(300,75),(365,145),(345,335),(280,410),(90,420)])
+    elif g=='P': line([(105,65),(90,420)]);line([(105,75),(315,75),(365,145),(330,235),(105,240)])
+    elif g=='N': line([(95,420),(120,70),(330,410),(365,65)])
+    elif g=='R': line([(105,65),(90,420)]);line([(105,75),(315,75),(365,145),(330,235),(105,240)]);line([(235,240),(365,420)])
+    else: raise KeyError(g)
+    a=m.astype(np.float32)/255
+    M=np.float32([[1,.16,-.16*H],[0,1,0]])
+    return cv2.warpAffine(a,M,(W,H),flags=cv2.INTER_LINEAR,borderMode=cv2.BORDER_CONSTANT,borderValue=0)
+
+def distress(a,g):
+    rng=np.random.default_rng(92000+ord(g));grain=gaussian_filter(rng.random(a.shape),1.0);long=gaussian_filter(rng.random(a.shape),(1.0,12.0))
+    return np.clip(a*np.clip(.93+.12*(grain-.5)-.10*np.maximum(long-.62,0),.68,1.0),0,1)
 
 def build_glyphs():
-    glyphs=list('0123456789DNPR')+['-']
-    atlas=np.zeros((2048,4096,4),dtype=np.float32)
-    metrics={};metadata=[]
-    for i,k in enumerate(glyphs):
-        a=performance_mask(k,2)
-        ys,xs=np.where(a>.025)
-        if len(xs)==0: raise ValueError('empty glyph '+k)
-        x0,x1=max(0,xs.min()-8),min(a.shape[1],xs.max()+9)
-        y0,y1=max(0,ys.min()-8),min(a.shape[0],ys.max()+9)
-        a=a[y0:y1,x0:x1]
-        targetH=480
-        targetW=max(1,round(a.shape[1]*targetH/a.shape[0]))
-        a=cv2.resize(a,(targetW,targetH),interpolation=cv2.INTER_LANCZOS4)
-        # ivory metal/paint treatment in sRGB authoring space; no font dependency
-        yy=np.linspace(0,1,targetH)[:,None]
-        shade=.92+.08*np.cos((yy-.18)*math.pi)
-        rgb=np.dstack([np.ones_like(a)*.97,np.ones_like(a)*.985,np.ones_like(a)*.96])*shade[...,None]
-        rgba=np.dstack([rgb*a[...,None],a])
-        x=(i%4)*1024+12;y=(i//4)*512+12
-        atlas[y:y+targetH,x:x+targetW]=rgba
-        wid=targetW*320/480
-        metrics[k]={'index':i,'uv':[x/4096,y/2048,targetW/4096,480/2048],'width':wid,'height':320,'advance':wid+8}
-        metadata.append({'glyph':k,'generator':'tools/build_assets.py:performance_mask','inkBounds':[0,0,targetW,480]})
+    glyphs=list('0123456789DNPR')+['-'];atlas=np.zeros((2048,4096,4),np.float32);metrics={};metadata=[]
+    for i,g in enumerate(glyphs):
+        a=approved_glyph(g) if g in {'7','2'} else path_mask(g)
+        a=distress(a,g);ys,xs=np.where(a>.025);a=a[:,max(0,xs.min()-8):xs.max()+9]
+        tw=max(1,min(900,round(a.shape[1]*480/a.shape[0])));a=cv2.resize(a,(tw,480),interpolation=cv2.INTER_LANCZOS4)
+        yy=np.linspace(0,1,480)[:,None];shade=.90+.10*np.cos((yy-.18)*math.pi)
+        base=np.dstack([np.ones_like(a)*.97,np.ones_like(a)*.985,np.ones_like(a)*.955])*shade[...,None]
+        base[...,1]+=np.clip((yy-.55)*.055,0,.03);rgba=np.dstack([np.clip(base,0,1)*a[...,None],a])
+        x=(i%4)*1024+12;y=(i//4)*512+12;atlas[y:y+480,x:x+tw]=rgba;wid=tw*320/480
+        metrics[g]={'index':i,'uv':[x/4096,y/2048,tw/4096,480/2048],'width':wid,'height':320,'advance':wid+8}
+        metadata.append({'glyph':g,'generator':'approved brush extraction' if g in {'7','2'} else 'JAKE PERFORMANCE BRUSH PATH','inkBounds':[0,0,tw,480]})
     Image.fromarray(np.uint8(np.clip(atlas,0,1)*255+.5),'RGBA').save(A/'glyph_atlas.png')
-    (R/'Resources/Config/glyphs.json').write_text(json.dumps(metrics,indent=2))
-    (S/'Typography/metrics.json').write_text(json.dumps(metadata,indent=2))
-    bit=Image.new('RGBA',(128,96));d=ImageDraw.Draw(bit)
-    d.rounded_rectangle((13,14,49,80),radius=12,outline=(130,219,166,255),width=5)
-    d.line([(82,30),(95,15),(95,79)],fill=(130,219,166,255),width=5)
-    d.line((84,80,108,80),fill=(130,219,166,255),width=5)
-    bit.save(A/'binary_glyphs.png')
+    (R/'Resources/Config/glyphs.json').write_text(json.dumps(metrics,indent=2));(S/'Typography/metrics.json').write_text(json.dumps(metadata,indent=2))
+    bit=Image.new('RGBA',(128,96));d=ImageDraw.Draw(bit);d.rounded_rectangle((13,14,49,80),radius=12,outline=(130,219,166,255),width=5);d.line([(82,30),(95,15),(95,79)],fill=(130,219,166,255),width=5);d.line((84,80,108,80),fill=(130,219,166,255),width=5);bit.save(A/'binary_glyphs.png')
 
 def pack():
     sprites={'car_body','brake_emission','brake_halo','contact_shadow','glyph_atlas','binary_glyphs'}
