@@ -70,7 +70,7 @@ struct ControlsView: View {
                     Toggle("车辆与接地层",isOn:$model.car)
                     Toggle("前景数字",isOn:$model.hud)
                     Picker("质量",selection:$model.qualityMode) { ForEach(["自动","高","均衡","节能"],id:\.self) { Text($0).tag($0) } }
-                    Picker("调试输出",selection:$model.debugMode) { ForEach(["画面","深度","运动向量"],id:\.self) { Text($0).tag($0) } }
+                    Picker("调试输出",selection:$model.debugMode) { ForEach(["画面","深度","运动向量","粗糙度","湿度","对象ID"],id:\.self) { Text($0).tag($0) } }
                     Text(model.report).font(.system(.footnote,design:.monospaced))
                 }
                 Section("证据") {
