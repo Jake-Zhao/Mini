@@ -1,0 +1,23 @@
+name: build
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+jobs:
+  core:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Core tests
+        run: swift test --package-path Core
+      - name: Python
+        run: python3 -m pip install -r tools/requirements.txt
+      - name: Check source assets
+        run: python3 tools/check_sources.py
+      - name: Build runtime assets
+        run: python3 tools/build_assets.py
+      - name: Regenerate project
+        run: python3 tools/make_project.py
+      - name: Xcode build
+        run: xcodebuild -project JakeDriveMetal.xcodeproj -scheme JakeDriveMetal -sdk iphonesimulator -configuration Debug CODE_SIGNING_ALLOWED=NO build
