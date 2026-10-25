@@ -57,7 +57,7 @@ final class JakeRenderer: NSObject, MTKViewDelegate {
             return try device.makeRenderPipelineState(descriptor: d)
         }
         pso = [
-            "scene": try pipeline("sceneFragment",[.rgba16Float,.rgba16Float]),
+            "scene": try pipeline("sceneFragment",[.rgba16Float,.rgba16Float,.rgba16Float]),
             "motion": try pipeline("motionBlurFragment",[.rgba16Float]),
             "focus": try pipeline("focusDepthFragment",[.rgba16Float]),
             "environment": try pipeline("environmentFragment",[.rgba16Float]),
@@ -167,7 +167,7 @@ final class JakeRenderer: NSObject, MTKViewDelegate {
                 e.dispatchThreads(MTLSize(width:384,height:1,depth:1),threadsPerThreadgroup:MTLSize(width:size,height:1,depth:1));e.endEncoding()
             }
 
-            try pass(command,"scene",outputs:[t.scene,t.motion],uniform:ub,inputs:material)
+            try pass(command,"scene",outputs:[t.scene,t.motion,t.material],uniform:ub,inputs:material)
             try pass(command,"motion",outputs:[t.blurred],uniform:ub,inputs:[t.scene,t.motion])
             if options.cinematicDepth { try pass(command,"focus",outputs:[t.scene],uniform:ub,inputs:[t.blurred,t.motion]) }
             try pass(command,"environment",outputs:[t.composed],uniform:ub,inputs:[options.cinematicDepth ? t.scene:t.blurred]+environment)
@@ -185,7 +185,7 @@ final class JakeRenderer: NSObject, MTKViewDelegate {
                 try pass(command,"bloomH",outputs:[t.bloomB],uniform:ub,inputs:[t.bloomA])
                 try pass(command,"bloomV",outputs:[t.bloomA],uniform:ub,inputs:[t.bloomB])
             }
-            try pass(command,"output",outputs:[drawable.texture],uniform:ub,inputs:[t.composed,q.bloomEnabled ? t.bloomA:clearBloom,t.motion])
+            try pass(command,"output",outputs:[drawable.texture],uniform:ub,inputs:[t.composed,q.bloomEnabled ? t.bloomA:clearBloom,t.motion,t.material])
 
             if options.hudEnabled && options.debugMode == 0 {
                 let rp=descriptor([drawable.texture],load:.load)
