@@ -22,14 +22,14 @@ public struct SceneCamera: Sendable {
         return (p.0-q.0,p.1-q.1)
     }
     public func vehicleFrame(width: Double, height: Double,
-                             x: Double = 3.10, z: Double = 6.50,
-                             proxyWidth: Double = 1.82, contactY: Double = 0.920) -> Rect {
+                             x: Double = 3.50, z: Double = 8.00,
+                             proxyWidth: Double = 1.65, contactY: Double = 0.920, textureAspect: Double = 1400.0/521.0) -> Rect {
         guard width.isFinite, height.isFinite, width>0, height>0,
-              proxyWidth.isFinite, proxyWidth>0 else {return Rect(0,0,0,0)}
+              proxyWidth.isFinite, proxyWidth>0, textureAspect.isFinite, textureAspect>0 else {return Rect(0,0,0,0)}
         let aspect=width/height
         guard let foot=project(x:x,y:0,z:z,aspect:aspect) else {return Rect(0,0,0,0)}
         let w=proxyWidth/(2*tanHalfVerticalFOV*aspect*z)*width
-        let h=w*542/992
+        let h=w/textureAspect
         return Rect(foot.0*width-w*0.52,foot.1*height-h*contactY,w,h)
     }
 }
