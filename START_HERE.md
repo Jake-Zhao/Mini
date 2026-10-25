@@ -1,35 +1,25 @@
-# JAKE DRIVE · START HERE
+# START HERE · JAKE DRIVE CINEMATIC FINAL
 
-This repository is the clean source of truth for the rebuild.
+Only use this repository/package. Do not import any historical design package.
 
-## Read in this order
-1. `README.md`
+Read in order:
+1. `DESIGN_MASTER.md`
 2. `docs/00_DECISIONS.md`
-3. `docs/09_CINEMATIC_REBUILD.md`
-4. `docs/10_SHOT_BIBLE.md`
-5. `docs/11_RENDER_PASSES.md`
-6. `docs/12_LUNA_EXECUTION.md`
-7. `docs/03_RENDER_AND_COLOR.md`
-8. `docs/04_ASSET_PIPELINE.md`
-9. `docs/05_TEMPORAL_MODEL.md`
-10. `docs/06_CODE_AND_DATA.md`
-11. `docs/07_ACCEPTANCE.md`
+3. `docs/01_ASSETS.md`
+4. `docs/02_RENDER_COLOR.md`
+5. `docs/03_TEMPORAL.md`
+6. `docs/04_RENDER_GRAPH.md`
+7. `docs/05_DATA_OBD.md`
+8. `docs/06_ACCEPTANCE.md`
+9. `docs/07_LUNA_EXECUTION.md`
 
-Then inspect:
-- `Reference/APPROVED.png`
-- `Source/Vehicle/`
-- `Source/Typography/`
-- `Renderer/`
-- `Core/`
-
-## First execution order
-```bash
+With the full distribution archive present:
+```sh
+python3 -m pip install -r tools/requirements.txt
 python3 tools/build_assets.py
-python3 tools/verify.py
-cd Core && swift test
+swift test --package-path Core
 ```
 
-On macOS/Xcode, build `JakeDriveMetal.xcodeproj` after generated resources are present.
+The renderer already exists. Do not write a second renderer from pseudocode, do not replace Metal with HTML, and do not start BLE integration before native PURE output passes the visual gate.
 
-## Project priority
-Cinematic PURE renderer first. BLE/OBD integration comes after the rendering baseline reaches the accepted visual quality.
+Current phase intentionally does not claim Xcode/iPhone validation.
