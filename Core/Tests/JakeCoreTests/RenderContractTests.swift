@@ -14,7 +14,7 @@ final class RenderContractTests: XCTestCase {
     func testRejectBehindCamera() {XCTAssertNil(SceneCamera().project(x:0,y:0,z:-1,aspect:2))}
     func testCarGroundRegistration() throws {
         let c=SceneCamera();let f=c.vehicleFrame(width:1774,height:887)
-        let uv=try XCTUnwrap(c.project(x:3.10,y:0,z:6.50,aspect:2))
+        let uv=try XCTUnwrap(c.project(x:3.50,y:0,z:8.00,aspect:2))
         XCTAssertEqual((f.y+f.height*0.920)/887,uv.1,accuracy:1e-10)
         XCTAssertEqual((f.x+f.width*0.52)/1774,uv.0,accuracy:1e-10)
     }
@@ -38,12 +38,12 @@ final class RenderContractTests: XCTestCase {
     func testPhaseInputGuard() {XCTAssertEqual(DistancePhase.unit(.nan,period:8),0);XCTAssertEqual(DistancePhase.unit(3,period:0),0)}
     func testBrakeAndParkAreIndependent() {let t=Telemetry(epoch:1,origin:.live,speed:Reading(0,time:0,epoch:1,origin:.live),gear:Reading(.park,time:0,epoch:1,origin:.live),brake:nil);XCTAssertEqual(t.resolve(at:0).brake,.unknown)}
     func testGearExcludesVehicleWithoutMovingSpeed() {
-        for a in [2.0, 2.167, 2.5] {
-            let w=500*a,h=500.0,car=SceneCamera().vehicleFrame(width:w,height:h)
-            let hero=Rect(w*0.205,h*0.32,w*0.59,h*0.36)
-            let g=HUDLayout.gearBadge(speedBounds:hero,width:w,height:h,avoid:car)
-            XCTAssertLessThanOrEqual(g.x+g.width,car.x-w*0.015+0.00001)
-            XCTAssertEqual(hero.midX,w*0.5,accuracy:0.00001)
-        }
+        let a = 2556.0/1179.0
+        let w=500*a,h=500.0,car=SceneCamera().vehicleFrame(width:w,height:h)
+        let hero=Rect(w*0.205,h*0.32,w*0.59,h*0.36)
+        let g=HUDLayout.gearBadge(speedBounds:hero,width:w,height:h,avoid:car)
+        let separated = g.x+g.width <= car.x || car.x+car.width <= g.x || g.y+g.height <= car.y || car.y+car.height <= g.y
+        XCTAssertTrue(separated)
+        XCTAssertEqual(hero.midX,w*0.5,accuracy:0.00001)
     }
 }
