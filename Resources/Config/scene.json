@@ -2,7 +2,7 @@
   "camera":{"tanHalfVerticalFOV":0.30,"eyeHeightMetres":1.22,"horizonY":0.61,"halfTunnelWidthMetres":6.5,"ceilingHeightMetres":4.2},
   "optics":{"exposureSeconds":0.0125,"exposureGain":1.0,"referenceSamples":33,"productionSamples":9,"bloomGain":0.07,"maxOutputBlurPixels":44},
   "materials":{"roadTileMetres":3.0,"wallTileMetres":1.5,"waterIOR":1.333,"roadWetRoughness":0.13,"roadDryRoughness":0.78,"lampPeriodMetres":8.0},
-  "vehicle":{"positionXMetres":3.10,"positionZMetres":6.50,"proxyWidthMetres":1.82,"textureWidth":992,"textureHeight":542,"contactY":0.920,"sourceType":"fixed-view photographic impostor; NOT a 3D vehicle mesh"},
+  "vehicle":{"positionXMetres":3.50,"positionZMetres":8.00,"proxyWidthMetres":1.65,"textureWidth":1400,"textureHeight":521,"contactY":0.920,"sourceType":"approved high-resolution transparent static car master; NOT a 3D vehicle mesh"},
   "hud":{"capHeightFraction":0.36,"maxWidthFraction":0.59,"heroCenter":[0.5,0.5]},
-  "provenance":"Camera/scene numbers are authored shot parameters. Vehicle proxy width approximates a compact hatchback scale but is not claimed as a survey measurement."
+  "provenance":"Camera/scene numbers are authored shot parameters. Vehicle proxy dimensions are visual staging parameters, not survey measurements."
 }
