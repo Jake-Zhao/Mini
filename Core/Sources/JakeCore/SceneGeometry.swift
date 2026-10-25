@@ -1,13 +1,14 @@
 import Foundation
 
 public struct SceneCamera: Sendable {
-    public var tanHalfVerticalFOV: Double = 0.50
-    public var eyeHeight: Double = 0.78
-    public var horizon: Double = 0.70
+    public var tanHalfVerticalFOV: Double = 0.30
+    public var eyeHeight: Double = 1.22
+    public var horizon: Double = 0.61
     public init() {}
     public func project(x: Double, y: Double, z: Double, aspect: Double) -> (Double, Double)? {
         guard x.isFinite, y.isFinite, z.isFinite, z > 0, aspect.isFinite, aspect > 0 else { return nil }
-        return (0.5 + x / (2 * tanHalfVerticalFOV * aspect * z), horizon - (y-eyeHeight) / (2*tanHalfVerticalFOV*z))
+        return (0.5 + x / (2 * tanHalfVerticalFOV * aspect * z),
+                horizon - (y-eyeHeight) / (2*tanHalfVerticalFOV*z))
     }
     public func groundPoint(u: Double, v: Double, aspect: Double) -> (Double, Double)? {
         guard v > horizon, aspect > 0 else { return nil }
@@ -20,8 +21,11 @@ public struct SceneCamera: Sendable {
               let q=project(x:x,y:y,z:z+speedMPS*exposure,aspect:aspect) else {return nil}
         return (p.0-q.0,p.1-q.1)
     }
-    public func vehicleFrame(width: Double, height: Double, x: Double = 6.8, z: Double = 10.5, proxyWidth: Double = 3.8, contactY: Double = 0.920) -> Rect {
-        guard width.isFinite, height.isFinite, width>0, height>0, proxyWidth.isFinite, proxyWidth>0 else {return Rect(0,0,0,0)}
+    public func vehicleFrame(width: Double, height: Double,
+                             x: Double = 3.10, z: Double = 6.50,
+                             proxyWidth: Double = 1.82, contactY: Double = 0.920) -> Rect {
+        guard width.isFinite, height.isFinite, width>0, height>0,
+              proxyWidth.isFinite, proxyWidth>0 else {return Rect(0,0,0,0)}
         let aspect=width/height
         guard let foot=project(x:x,y:0,z:z,aspect:aspect) else {return Rect(0,0,0,0)}
         let w=proxyWidth/(2*tanHalfVerticalFOV*aspect*z)*width
