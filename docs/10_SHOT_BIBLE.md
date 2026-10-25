@@ -11,13 +11,16 @@
 ## Camera
 The camera is fixed to the virtual driver viewpoint. Avoid camera shake.
 
-Starting targets (tune only against reference):
-- FOV horizontal: 58–66 degrees
-- camera height: 1.15–1.35 m
-- pitch: 0 to -2 degrees
-- roll: 0 degrees
-- horizon: ~58–64% screen height
+Locked starting shot (change only with visual evidence):
+- reference aspect: ~2.0:1
+- tanHalfVerticalFOV: 0.30, approximately 62° horizontal FOV at 2.0:1
+- virtual eye height: 1.22 m
+- horizon: 61% screen height
+- roll: 0°
 - vanishing point: centered horizontally
+- companion vehicle proxy: x = 3.10 m, z = 6.50 m, proxy width = 1.82 m
+
+These are authored shot coordinates, not surveyed tunnel dimensions. The purpose is a coherent camera/ground relationship, not a claim about physical track geometry.
 
 ## Lens behavior
 - No fake zoom pulse on speed changes.
