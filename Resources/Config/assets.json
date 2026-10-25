@@ -1,0 +1,13 @@
+[
+{"name":"asphalt_color","png":"Art/asphalt_color.png","runtime":"Art/asphalt_color.jtex","size":[1024,1024],"srgb":true,"encoding":"rgba8","alpha":"opaque","mipmaps":true},
+{"name":"asphalt_surface","png":"Art/asphalt_surface.png","runtime":"Art/asphalt_surface.jtex","size":[1024,1024],"srgb":false,"encoding":"rgba8","alpha":"data","mipmaps":true},
+{"name":"binary_glyphs","png":"Art/binary_glyphs.png","runtime":"Art/binary_glyphs.jtex","size":[128,96],"srgb":false,"encoding":"linear-premultiplied-f16","alpha":"linear-premultiplied","mipmaps":false},
+{"name":"brake_emission","png":"Art/brake_emission.png","runtime":"Art/brake_emission.jtex","size":[992,542],"srgb":false,"encoding":"linear-premultiplied-f16","alpha":"linear-premultiplied","mipmaps":true},
+{"name":"brake_halo","png":"Art/brake_halo.png","runtime":"Art/brake_halo.jtex","size":[992,542],"srgb":false,"encoding":"linear-premultiplied-f16","alpha":"linear-premultiplied","mipmaps":true},
+{"name":"car_body","png":"Art/car_body.png","runtime":"Art/car_body.jtex","size":[992,542],"srgb":false,"encoding":"linear-premultiplied-f16","alpha":"linear-premultiplied","mipmaps":true},
+{"name":"concrete_color","png":"Art/concrete_color.png","runtime":"Art/concrete_color.jtex","size":[1024,1024],"srgb":true,"encoding":"rgba8","alpha":"opaque","mipmaps":true},
+{"name":"concrete_surface","png":"Art/concrete_surface.png","runtime":"Art/concrete_surface.jtex","size":[1024,1024],"srgb":false,"encoding":"rgba8","alpha":"data","mipmaps":true},
+{"name":"contact_shadow","png":"Art/contact_shadow.png","runtime":"Art/contact_shadow.jtex","size":[512,192],"srgb":false,"encoding":"linear-premultiplied-f16","alpha":"linear-premultiplied","mipmaps":true},
+{"name":"flow_noise","png":"Art/flow_noise.png","runtime":"Art/flow_noise.jtex","size":[512,512],"srgb":false,"encoding":"rgba8","alpha":"data","mipmaps":true},
+{"name":"glyph_atlas","png":"Art/glyph_atlas.png","runtime":"Art/glyph_atlas.jtex","size":[4096,2048],"srgb":false,"encoding":"linear-premultiplied-f16","alpha":"linear-premultiplied","mipmaps":false}
+]
