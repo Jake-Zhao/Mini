@@ -39,7 +39,7 @@ final class LabModel: ObservableObject {
         o.rainEnabled = rain; o.carEnabled = car; o.hudEnabled = hud
         o.automaticQuality = qualityMode == "自动"
         o.manualQuality = qualityMode == "节能" ? .cool : (qualityMode == "均衡" ? .balanced : .high)
-        o.debugMode = debugMode == "深度" ? 1 : (debugMode == "运动向量" ? 2 : 0)
+        o.debugMode = debugMode == "深度" ? 1 : (debugMode == "运动向量" ? 2 : (debugMode == "粗糙度" ? 3 : (debugMode == "湿度" ? 4 : (debugMode == "对象ID" ? 5 : 0))))
         return o
     }
     private func startTimer() {
