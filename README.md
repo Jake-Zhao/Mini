@@ -1,19 +1,22 @@
-# JAKE DRIVE
+# JAKE DRIVE · CINEMATIC METAL BASELINE
 
-iPhone-only landscape OBD cockpit for Jake's MINI F56, built around a native Swift + Metal rendering pipeline.
+This is the only clean repository baseline.
 
-## Status
-This repository is the clean reconstruction baseline. The visual target is the approved PURE cockpit: cinematic wet-tunnel motion, centered hero speed, small gear indicator, dark binary rain derived from “一路平安”, and a small green JCW-style car integrated into the roadway.
+JAKE DRIVE is an iPhone-only landscape OBD cockpit whose PURE screen is rendered as a cinematic real-time Metal shot: centered hero speed, small gear badge, small green MINI companion car on the lower-right roadway, wet arched tunnel, and dark binary rain derived from the UTF-8 bytes of “一路平安”.
 
 ## Start
-Read `START_HERE.md` first. Then follow `docs/` in numeric order.
+1. `START_HERE.md`
+2. `DESIGN_MASTER.md`
+3. `docs/00_DECISIONS.md` through `docs/07_LUNA_EXECUTION.md`
+4. `Reference/APPROVED.png` from the final distribution archive
 
-## Principles
-- Native iOS; no WebView dashboard.
-- Metal owns the driving scene and post-processing.
-- Hero digits and gear remain sharp after background post-processing.
-- Static art provides material quality; shaders provide motion, depth, lighting, and atmosphere.
-- 0 km/h freezes decorative motion; higher speed increases spatial motion, exposure blur, rain drift, and road reflection flow.
-- Unknown gear/brake data remains unknown; never infer vehicle state from speed alone.
+## Engineering principles
+- SwiftUI shell + MTKView native renderer; no WebView dashboard.
+- HDR scene / G-buffer / exposure integration / environment / bloom / tone-map / sharp-HUD pipeline.
+- Hero speed and gear are drawn after all background post-processing.
+- Virtual shutter is fixed at 12.5 ms and independent of refresh rate.
+- 0 km/h freezes decorative travel.
+- Unknown gear/brake stays unknown.
+- Static art supplies quality; shaders supply coherent space, exposure, reflection, particles, and motion.
 
-Generated GPU cache textures are intentionally not committed. They are rebuilt from source assets by `tools/build_assets.py`.
+Large binary art masters are distributed in `JAKE_DRIVE_CINEMATIC_FINAL.zip`; see `Source/Vehicle/README.md` for exact paths and SHA-256 hashes.
