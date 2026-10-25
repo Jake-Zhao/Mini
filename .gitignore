@@ -1,0 +1,9 @@
+.DS_Store
+.build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+Resources/Art/*.jtex
+Resources/Art/*.png
+!Resources/Art/.gitkeep
+Evidence/
