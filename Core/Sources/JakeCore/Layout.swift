@@ -44,8 +44,8 @@ public enum HUDLayout {
         try line(text, metrics: metrics, center: (width * 0.5, height * 0.5), capHeight: text == "-" ? height * 0.12 : height * 0.36, maxWidth: width * 0.59)
     }
     public static func gearBadge(speedBounds: Rect, width: Double, height: Double, avoid: Rect? = nil) -> Rect {
-        let w = height * 0.145, h = height * 0.071
-        let y = speedBounds.y + speedBounds.height - h * 0.75
+        let w = height * 0.110, h = height * 0.055
+        let y = speedBounds.y + speedBounds.height - h * 0.70
         var x = min(width - w - height * 0.06, speedBounds.x + speedBounds.width - w * 0.35)
         if let a=avoid, y < a.y+a.height, y+h > a.y, x+w > a.x-width*0.015, x < a.x+a.width {
             x=min(x,a.x-width*0.015-w)
