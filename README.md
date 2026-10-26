@@ -19,7 +19,7 @@ swift test --package-path Core
 # On macOS: open JakeDriveMetal.xcodeproj
 ```
 
-The art importer verifies all three binary masters, builds **11** PNG/JTX texture pairs, **15** HUD glyphs, icon assets, and regenerates the Xcode project. Generated GPU caches are ignored by Git; the binary masters can be committed once their public distribution rights are confirmed.
+The art importer verifies all three binary masters, builds **11** PNG/JTX texture pairs, **15** HUD glyphs, icon assets, and regenerates the Xcode project. Generated GPU caches are ignored by Git. After confirming rights to publish the provided source photograph in this **public** repository, run `bash tools/publish_art_masters.sh --push` to commit only the three verified immutable image masters.
 
 ## Design invariants
 - SwiftUI shell, Metal/MTKView cinematic background; no WebView cockpit.
