@@ -1,33 +1,47 @@
-name: build
+name: verification
 on:
-  workflow_dispatch:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 jobs:
-  core:
+  core-and-contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: swift-actions/setup-swift@v2
+        with:
+          swift-version: "6.0"
+      - name: Swift core
+        run: swift test --package-path Core
+      - name: Source and render contracts (asset-independent)
+        run: python3 tools/check_project.py
+      - name: Art master status
+        shell: bash
+        run: |
+          if [[ -f Source/Vehicle/car_master.png && -f Source/Vehicle/rear_original.png && -f Reference/APPROVED.png ]]; then
+            echo 'Art masters are present in this checkout.'
+          else
+            echo 'BLOCKED: Binary art masters were distributed separately; see Source/Vehicle/README.md.'
+            echo 'This job tests source contracts only; native rendering was NOT validated.'
+          fi
+  native-with-art:
+    if: github.event_name == 'workflow_dispatch'
     runs-on: macos-15
     steps:
       - uses: actions/checkout@v4
-      - name: Core tests
-        run: swift test --package-path Core
-      - name: Python
+      - name: Require complete approved image masters
+        run: |
+          for file in Source/Vehicle/car_master.png Source/Vehicle/rear_original.png Reference/APPROVED.png; do
+            test -f "$file" || { echo "::error::Missing $file. Import JAKE_DRIVE_CINEMATIC_FINAL.zip and commit the approved masters."; exit 1; }
+          done
+      - name: Install image compiler
         run: python3 -m pip install -r tools/requirements.txt
-      - name: Source asset status
+      - name: Compile verified GPU images
         run: |
-          if [ -f Source/Vehicle/car_master.png ] && [ -f Reference/APPROVED.png ]; then
-            echo "Full binary art sources present."
-          else
-            echo "Binary art masters are distributed in JAKE_DRIVE_CINEMATIC_FINAL.zip; core CI will continue without pretending asset compilation passed."
-          fi
-      - name: Build runtime assets when masters are present
-        run: |
-          if [ -f Source/Vehicle/car_master.png ] && [ -f Reference/APPROVED.png ]; then
-            python3 tools/build_assets.py
-          else
-            echo "SKIP: source art masters not present in connector-populated Git tree."
-          fi
-      - name: Regenerate project
-        run: python3 tools/make_project.py
-      - name: Xcode build
+          python3 tools/build_assets.py
+          python3 tools/build_app_icons.py
+          python3 tools/check_assets.py
+          python3 tools/make_project.py
+      - name: Build simulator application (not device performance validation)
         run: xcodebuild -project JakeDriveMetal.xcodeproj -scheme JakeDriveMetal -sdk iphonesimulator -configuration Debug CODE_SIGNING_ALLOWED=NO build
