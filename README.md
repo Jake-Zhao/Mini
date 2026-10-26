@@ -1,22 +1,32 @@
-# JAKE DRIVE · CINEMATIC METAL BASELINE
+# JAKE DRIVE · iPhone / Metal Cinematic Cockpit
 
-This is the only clean repository baseline.
+A native SwiftUI + Metal design-and-implementation baseline for a landscape-only iPhone dashboard for Jake's MINI F56. The approved PURE look has a centered brushed speed numeral, a small gear badge, a small companion car on the wet roadway, and restrained binary rain encoding **一路平安**.
 
-JAKE DRIVE is an iPhone-only landscape OBD cockpit whose PURE screen is rendered as a cinematic real-time Metal shot: centered hero speed, small gear badge, small green MINI companion car on the lower-right roadway, wet arched tunnel, and dark binary rain derived from the UTF-8 bytes of “一路平安”.
+**Read `START_HERE.md` before editing.**
 
-## Start
-1. `START_HERE.md`
-2. `DESIGN_MASTER.md`
-3. `docs/00_DECISIONS.md` through `docs/07_LUNA_EXECUTION.md`
-4. `Reference/APPROVED.png` from the final distribution archive
+## Repository status
+The GitHub tree contains the Swift core, Metal render passes, Xcode project generator and project, scene settings, build/test scripts, and contracts. The three full-resolution image masters are in the companion **`JAKE_DRIVE_CINEMATIC_FINAL.zip`** download supplied in the conversation, not yet present in this public Git tree. Do not replace them with inferior placeholders.
 
-## Engineering principles
-- SwiftUI shell + MTKView native renderer; no WebView dashboard.
-- HDR scene / G-buffer / exposure integration / environment / bloom / tone-map / sharp-HUD pipeline.
-- Hero speed and gear are drawn after all background post-processing.
-- Virtual shutter is fixed at 12.5 ms and independent of refresh rate.
-- 0 km/h freezes decorative travel.
-- Unknown gear/brake stays unknown.
-- Static art supplies quality; shaders supply coherent space, exposure, reflection, particles, and motion.
+## Exact startup
 
-Large binary art masters are distributed in `JAKE_DRIVE_CINEMATIC_FINAL.zip`; see `Source/Vehicle/README.md` for exact paths and SHA-256 hashes.
+```sh
+git clone https://github.com/Jake-Zhao/Mini.git
+cd Mini
+python3 -m pip install -r tools/requirements.txt
+python3 tools/import_art_masters.py ~/Downloads/JAKE_DRIVE_CINEMATIC_FINAL.zip
+python3 tools/check_project.py
+swift test --package-path Core
+# On macOS: open JakeDriveMetal.xcodeproj
+```
+
+The art importer verifies all three binary masters, builds **11** PNG/JTX texture pairs, **15** HUD glyphs, icon assets, and regenerates the Xcode project. Generated GPU caches are ignored by Git; the binary masters can be committed once their public distribution rights are confirmed.
+
+## Design invariants
+- SwiftUI shell, Metal/MTKView cinematic background; no WebView cockpit.
+- 12.5 ms virtual exposure independent of animation FPS; 0 km/h stops decorative travel.
+- Hero speed and gear are drawn last at native resolution and never enter background blur/bloom.
+- No `km/h`, tachometer, Union Jack, or extraneous status cards on PURE.
+- Unknown live gear or brake state stays unknown; DEMO cannot pose as live OBD.
+- Source photos and master art do not imply vehicle/photograph rights; see `SOURCE_RIGHTS.md`.
+
+See [docs/REPO_TREE.md](docs/REPO_TREE.md) for the full file layout, [DESIGN_MASTER.md](DESIGN_MASTER.md) for the visual contract and [DELIVERY_STATUS.md](DELIVERY_STATUS.md) for what has and has not been tested.
