@@ -3,7 +3,10 @@
 DerivedData/
 *.xcuserstate
 xcuserdata/
+__pycache__/
+*.pyc
 Resources/Art/*.jtex
 Resources/Art/*.png
 !Resources/Art/.gitkeep
+App/Assets.xcassets/AppIcon.appiconset/*.png
 Evidence/
