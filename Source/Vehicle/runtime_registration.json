@@ -1,32 +1,33 @@
 {
-  "source": "car_master.png",
-  "sourceSize": [
-    2172,
-    724
+  "source": "Reference/APPROVED.png",
+  "sourceCrop": [
+    1300,
+    480,
+    1725,
+    745
   ],
-  "alphaBBox": [
-    106,
-    0,
-    2051,
-    724
+  "sourceCanvas": [
+    1774,
+    887
   ],
-  "runtimeSize": [
-    1400,
-    521
+  "runtimeCanvas": [
+    1050,
+    655
   ],
-  "brakeRegionsSource": [
+  "actualTireContacts": [
     [
-      1160,
-      240,
-      1360,
-      440
+      1399,
+      672
     ],
     [
-      1740,
-      280,
-      1885,
-      450
+      1501,
+      697
+    ],
+    [
+      1701,
+      693
     ]
   ],
-  "note": "explicit tail-lamp regions; silhouette comes from approved alpha, never a brightness threshold"
+  "brakeChangedPixels": 20009,
+  "pose": "same approved roadway camera; one master for both states"
 }
