@@ -1,1 +1,117 @@
-{"workingSpace":"linear sRGB / scene HDR; one display encoding at bgra8Unorm_srgb","passes":[{"id":"scene","entry":"sceneFragment","output":["scene.rgba16Float","motionDepth.rgba16Float"],"inputs":["asphalt_color","asphalt_surface","concrete_color","concrete_surface","flow_noise"],"notes":"Camera rays and virtual-exposure integration. Diffuse and reflection evaluated at each exposure sample. motionDepth xy is shutter-interval displacement, NOT MetalFX frame vectors. z is axial view depth in metres."},{"id":"shutter","entry":"motionBlurFragment","inputs":["scene","motionDepth"],"output":["blurred"],"notes":"Pass-through when temporal scene integration is enabled. Legacy-style gather is an explicit alternative, never both."},{"id":"focus","entry":"focusDepthFragment","enabledByDefault":false,"inputs":["blurred","motionDepth"],"output":["scene reuse"],"notes":"Optional, off by default; not applied to car or HUD."},{"id":"environment","entry":"environmentFragment","inputs":["blurred OR focused","car_body","brake_emission","brake_halo","binary_glyphs","flow_noise","contact_shadow"],"output":["composed"],"notes":"Linear premultiplied vehicle, proxy reflection, contact anchors, binary layers. Baked photographic vehicle lighting is not relit as true geometry."},{"id":"spray","entry":["advanceSpray","sprayVertex","sprayFragment"],"output":["composed load"],"notes":"GPU-updated wake, depth rejection and silhouette rejection; never deletes vehicle pixels."},{"id":"bloom","entry":["bloomExtractFragment","bloomHorizontalFragment","bloomVerticalFragment"],"output":["quarter bloomA","quarter bloomB"],"notes":"Environment only; omitted in low-cost quality mode."},{"id":"output","entry":"outputFragment","output":["drawable bgra8Unorm_srgb"],"notes":"Filmic scene tone mapping. No explicit gamma encode in the shader."},{"id":"hud","entry":["accentFragment","badgeFragment","glyphVertex","glyphFragment"],"output":["drawable load"],"notes":"Final full-resolution foreground. Premultiplied alpha ONE / ONE_MINUS_SOURCE_ALPHA. No background blur, depth blur, bloom or time history."}],"forbidden":["sampling a texture while rendering into the same texture in that pass","second alpha multiply on premultiplied sprite","two motion blurs in series","frame-rate-scaled exposure length","inferred live brake or gear"]}
+{
+  "workingSpace": "linear sRGB / scene HDR; one display encoding at bgra8Unorm_srgb",
+  "passes": [
+    {
+      "id": "scene",
+      "entry": "sceneFragment",
+      "output": [
+        "scene.rgba16Float",
+        "motionDepth.rgba16Float"
+      ],
+      "inputs": [
+        "asphalt_color",
+        "asphalt_surface",
+        "concrete_color",
+        "concrete_surface",
+        "flow_noise"
+      ],
+      "notes": "Camera rays and virtual-exposure integration. Diffuse and reflection evaluated at each exposure sample. motionDepth xy is shutter-interval displacement, NOT MetalFX frame vectors. z is axial view depth in metres."
+    },
+    {
+      "id": "shutter",
+      "entry": "motionBlurFragment",
+      "inputs": [
+        "scene",
+        "motionDepth"
+      ],
+      "output": [
+        "blurred"
+      ],
+      "notes": "Pass-through when temporal scene integration is enabled. Legacy-style gather is an explicit alternative, never both."
+    },
+    {
+      "id": "focus",
+      "entry": "focusDepthFragment",
+      "enabledByDefault": false,
+      "inputs": [
+        "blurred",
+        "motionDepth"
+      ],
+      "output": [
+        "scene reuse"
+      ],
+      "notes": "Optional, off by default; not applied to car or HUD."
+    },
+    {
+      "id": "environment",
+      "entry": "environmentFragment",
+      "inputs": [
+        "blurred OR focused",
+        "car_cruise OR car_brake",
+        "brake_emission",
+        "brake_halo",
+        "binary_glyphs",
+        "flow_noise",
+        "contact_shadow",
+        "car_wake"
+      ],
+      "output": [
+        "composed"
+      ],
+      "notes": "Use a single photo-derived car crop from Reference/APPROVED.png, source-aligned to road contact points. Brake state changes tail lamps only, no pose switch. Camera-registered tire wake (speed controlled) and ground shadow precede the car; wet-road reflection follows the contact line. The vehicle remains a fixed-view photographic impostor, not a true 3D model."
+    },
+    {
+      "id": "spray",
+      "entry": [
+        "advanceSpray",
+        "sprayVertex",
+        "sprayFragment"
+      ],
+      "output": [
+        "composed load"
+      ],
+      "notes": "GPU-updated wake, depth rejection and silhouette rejection; never deletes vehicle pixels."
+    },
+    {
+      "id": "bloom",
+      "entry": [
+        "bloomExtractFragment",
+        "bloomHorizontalFragment",
+        "bloomVerticalFragment"
+      ],
+      "output": [
+        "quarter bloomA",
+        "quarter bloomB"
+      ],
+      "notes": "Environment only; omitted in low-cost quality mode."
+    },
+    {
+      "id": "output",
+      "entry": "outputFragment",
+      "output": [
+        "drawable bgra8Unorm_srgb"
+      ],
+      "notes": "Filmic scene tone mapping. No explicit gamma encode in the shader."
+    },
+    {
+      "id": "hud",
+      "entry": [
+        "accentFragment",
+        "badgeFragment",
+        "glyphVertex",
+        "glyphFragment"
+      ],
+      "output": [
+        "drawable load"
+      ],
+      "notes": "Final full-resolution foreground. Premultiplied alpha ONE / ONE_MINUS_SOURCE_ALPHA. No background blur, depth blur, bloom or time history."
+    }
+  ],
+  "forbidden": [
+    "sampling a texture while rendering into the same texture in that pass",
+    "second alpha multiply on premultiplied sprite",
+    "two motion blurs in series",
+    "frame-rate-scaled exposure length",
+    "inferred live brake or gear"
+  ]
+}
