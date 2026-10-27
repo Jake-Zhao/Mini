@@ -22,8 +22,8 @@ public struct SceneCamera: Sendable {
         return (p.0-q.0,p.1-q.1)
     }
     public func vehicleFrame(width: Double, height: Double,
-                             x: Double = 3.50, z: Double = 8.00,
-                             proxyWidth: Double = 1.65, contactY: Double = 0.920, textureAspect: Double = 1400.0/521.0) -> Rect {
+                             x: Double = 4.30, z: Double = 10.00,
+                             proxyWidth: Double = 2.35, contactY: Double = 0.820, textureAspect: Double = 1050.0/655.0) -> Rect {
         guard width.isFinite, height.isFinite, width>0, height>0,
               proxyWidth.isFinite, proxyWidth>0, textureAspect.isFinite, textureAspect>0 else {return Rect(0,0,0,0)}
         let aspect=width/height
