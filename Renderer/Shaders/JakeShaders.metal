@@ -125,9 +125,11 @@ fragment half4 environmentFragment(ScreenVertex in [[stage_in]],constant FrameUn
             float4 wake=carWake.sample(spriteSampler,local);
             c=c*(1.0-wake.a*sprayStrength*.72)+wake.rgb*sprayStrength*.72;
             float4 car=carBody.sample(spriteSampler,local);
-            float ambient=0.94+0.06*sin(u.phaseA.x*6.2831853);
-            float trans=exp(-u.vehicle.y*.009);
-            float3 pm=(car.rgb*float3(.52,.58,.53)*ambient)*trans+float3(.009,.019,.014)*(1-trans)*car.a;
+            // The vehicle is taken from the actual approved scene; it already
+            // contains environment light. Preserve its photographic colors and
+            // use only a slight distance fog, never oscillating relighting.
+            float trans=exp(-u.vehicle.y*.004);
+            float3 pm=car.rgb*trans+float3(.009,.019,.014)*(1.0-trans)*car.a;
             c=pm+c*(1-car.a);
             float4 lamp=brakeEmission.sample(spriteSampler,local),halo=brakeHalo.sample(spriteSampler,local);
             // The selected car_brake texture already contains brighter brake-light pixels.
