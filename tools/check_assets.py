@@ -8,7 +8,7 @@ MASTERS={
  'Source/Vehicle/rear_original.png':('0377d987c9a3c66ed1b040e5b60ed96affcc4edaf8c650303698aa1c59e723d5',(676,451)),
  'Reference/APPROVED.png':('da8498daf0c5effce4c5654e34cec7de95c4b85af62f8a7eb25af608c276deed',(1774,887))
 }
-NAMES={'asphalt_color','asphalt_surface','binary_glyphs','brake_emission','brake_halo','car_body','car_cruise','car_brake','concrete_color','concrete_surface','contact_shadow','flow_noise','glyph_atlas'}
+NAMES={'asphalt_color','asphalt_surface','binary_glyphs','brake_emission','brake_halo','car_body','car_cruise','car_brake','car_wake','concrete_color','concrete_surface','contact_shadow','flow_noise','glyph_atlas'}
 GLYPHS=set('0123456789DNPR-')
 def check_sources():
  from PIL import Image
@@ -54,6 +54,13 @@ def check_runtime():
  assert np.any(changed),'brake state is visually identical'
  assert not np.any(changed & ~mask),'car changes outside tail lamps (wrong angle/crop)'
  print('CAR STATE ALIGNMENT PASS:',int(changed.sum()),'tail-lamp pixels changed, alpha identical')
+ # The water layer is a photograph sampled from the same approved crop.
+ wake=np.asarray(Image.open(ROOT/'Resources/Art/car_wake.png').convert('RGBA'))
+ assert wake.shape==off.shape
+ assert np.count_nonzero(wake[...,3]>5)>500,'Water wake missing'
+ # Exact crop/pose still locked during brake transitions.
+ assert (off[...,3]==on[...,3]).all()
+ print('ROAD COMPANION FOOTPRINT PASS:',int(np.count_nonzero(wake[...,3]>5)),'wake pixels')
  g=json.loads((ROOT/'Resources/Config/glyphs.json').read_text())
  assert set(g)==GLYPHS,'Glyph count mismatch'
  for key,v in g.items():
