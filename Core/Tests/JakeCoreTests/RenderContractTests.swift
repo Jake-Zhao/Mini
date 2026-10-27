@@ -14,8 +14,8 @@ final class RenderContractTests: XCTestCase {
     func testRejectBehindCamera() {XCTAssertNil(SceneCamera().project(x:0,y:0,z:-1,aspect:2))}
     func testCarGroundRegistration() throws {
         let c=SceneCamera();let f=c.vehicleFrame(width:1774,height:887)
-        let uv=try XCTUnwrap(c.project(x:3.50,y:0,z:8.00,aspect:2))
-        XCTAssertEqual((f.y+f.height*0.920)/887,uv.1,accuracy:1e-10)
+        let uv=try XCTUnwrap(c.project(x:4.30,y:0,z:10.00,aspect:2))
+        XCTAssertEqual((f.y+f.height*0.820)/887,uv.1,accuracy:1e-10)
         XCTAssertEqual((f.x+f.width*0.52)/1774,uv.0,accuracy:1e-10)
     }
     func testShutterDoesNotDependOnFrameRate() throws {
