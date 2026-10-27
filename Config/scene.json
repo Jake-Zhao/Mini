@@ -23,13 +23,13 @@
     "lampPeriodMetres": 8
   },
   "vehicle": {
-    "positionXMetres": 4.3,
-    "positionZMetres": 10,
-    "proxyWidthMetres": 2.35,
-    "textureWidth": 1050,
-    "textureHeight": 655,
-    "contactY": 0.82,
-    "sourceType": "single approved-shot photo sprite with wheel-footprint camera calibration; NOT 3D car geometry"
+    "positionXMetres": 5.77,
+    "positionZMetres": 13,
+    "proxyWidthMetres": 3.61,
+    "textureWidth": 1230,
+    "textureHeight": 780,
+    "contactY": 0.806,
+    "sourceType": "single approved road camera silhouette; independent photographic wake; two tire contact anchors"
   },
   "hud": {
     "capHeightFraction": 0.36,
@@ -39,5 +39,5 @@
       0.5
     ]
   },
-  "provenance": "Camera and staging are authored scene parameters. The cropped vehicle comes from the same approved wet-road shot; it is not another independently generated camera angle."
+  "provenance": "Vehicle image source and tyre contact pixels registered against Reference/APPROVED.png; plane is an impostor, not 3D mesh or CFD."
 }
