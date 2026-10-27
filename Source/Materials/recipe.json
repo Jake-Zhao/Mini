@@ -1,0 +1,6 @@
+{
+  "classification": "authored procedural source, NOT a measured PBR scan",
+  "road": {"seed": 9201,"tileMetres": 3,"heightMaxMetres": 0.0008,"dryRoughness": [0.62,0.87],"wetCoatIOR": 1.333},
+  "wall": {"seed": 2901,"tileMetres": 1.5},
+  "noiseSeeds": [71,19,32]
+}
