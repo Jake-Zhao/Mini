@@ -1,0 +1,51 @@
+name: Publish exact-pose companion car images
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/publish-companion-art.yml'
+      - 'tools/build_companion_states.py'
+      - 'tools/build_assets.py'
+      - 'tools/check_assets.py'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: companion-art-main
+  cancel-in-progress: false
+
+jobs:
+  generate-and-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out approved source artwork
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Python dependencies
+        run: python3 -m pip install -r tools/requirements.txt
+      - name: Rebuild all artwork from same master
+        run: python3 tools/build_assets.py
+      - name: Check pixel alignment and alpha
+        run: python3 tools/check_assets.py
+      - name: Commit two matching poses and brake textures
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Only source-derived preview PNGs, not huge generated GPU .jtex caches.
+          git add -f -- \
+            Resources/Art/car_body.png \
+            Resources/Art/car_cruise.png \
+            Resources/Art/car_brake.png \
+            Resources/Art/brake_emission.png \
+            Resources/Art/brake_halo.png
+          if git diff --cached --quiet; then
+            echo "Companion artwork already matches source; no commit needed."
+            exit 0
+          fi
+          git -c user.name='github-actions[bot]' \
+              -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+              commit -m "assets: publish matched-angle MINI companion sprites"
+          git push origin HEAD:main
