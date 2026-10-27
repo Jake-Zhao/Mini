@@ -30,9 +30,9 @@ def check():
     expectedFunctions=['sceneFragment','motionBlurFragment','environmentFragment','bloomExtractFragment','bloomHorizontalFragment','bloomVerticalFragment','outputFragment','glyphFragment','advanceSpray']
     for fn in expectedFunctions:assert fn in shader,fn
     assets=json.loads((ROOT/'Resources/Config/assets.json').read_text())
-    assert len(assets)==13
+    assert len(assets)==14
     byName={a['name']:a for a in assets}
-    assert byName['car_body']['size']==[1400,521]
+    assert byName['car_body']['size']==[1050,655]
     scene=json.loads((ROOT/'Config/scene.json').read_text())
     assert 0.0<scene['optics']['exposureSeconds']<=.02
     assert len(scene['hud']['heroCenter'])==2
