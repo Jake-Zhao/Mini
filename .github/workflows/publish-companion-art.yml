@@ -4,8 +4,10 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/publish-companion-art.yml'
-      - 'tools/build_companion_states.py'
+      - 'tools/build_road_car_from_approved.py'
       - 'tools/build_assets.py'
+      - 'Resources/Config/assets.json'
+      - 'Config/scene.json'
       - 'tools/check_assets.py'
   workflow_dispatch:
 
@@ -26,11 +28,11 @@ jobs:
           persist-credentials: true
       - name: Python dependencies
         run: python3 -m pip install -r tools/requirements.txt
-      - name: Rebuild all artwork from same master
+      - name: Rebuild companion artwork from approved camera crop
         run: python3 tools/build_assets.py
       - name: Check pixel alignment and alpha
         run: python3 tools/check_assets.py
-      - name: Commit two matching poses and brake textures
+      - name: Commit approved-scene vehicle, matched brake pair and wet-road assets
         shell: bash
         run: |
           set -euo pipefail
@@ -39,13 +41,16 @@ jobs:
             Resources/Art/car_body.png \
             Resources/Art/car_cruise.png \
             Resources/Art/car_brake.png \
+            Resources/Art/car_wake.png \
             Resources/Art/brake_emission.png \
-            Resources/Art/brake_halo.png
+            Resources/Art/brake_halo.png \
+            Resources/Art/contact_shadow.png \
+            Source/Vehicle/runtime_registration.json
           if git diff --cached --quiet; then
             echo "Companion artwork already matches source; no commit needed."
             exit 0
           fi
           git -c user.name='github-actions[bot]' \
               -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
-              commit -m "assets: publish matched-angle MINI companion sprites"
+              commit -m "assets: publish road-calibrated companion vehicle and splash"
           git push origin HEAD:main
