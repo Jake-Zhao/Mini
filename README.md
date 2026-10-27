@@ -19,7 +19,11 @@ swift test --package-path Core
 # On macOS: open JakeDriveMetal.xcodeproj
 ```
 
-The art importer verifies all three binary masters, builds **11** PNG/JTX texture pairs, **15** HUD glyphs, icon assets, and regenerates the Xcode project. Generated GPU caches are ignored by Git. After confirming rights to publish the provided source photograph in this **public** repository, run `bash tools/publish_art_masters.sh --push` to commit only the three verified immutable image masters.
+The art importer verifies all three binary masters, builds **14** PNG/JTX texture pairs, **15** HUD glyphs, icon assets, and regenerates the Xcode project. Generated GPU caches are ignored by Git. After confirming rights to publish the provided source photograph in this **public** repository, run `bash tools/publish_art_masters.sh --push` to commit only the three verified immutable image masters.
+
+
+## Road-aligned companion vehicle (locked)
+The normal/braking companion vehicle in PURE is extracted from the same `Reference/APPROVED.png` roadway camera; `car_cruise.png` / `car_brake.png` share the same transparent silhouette and only the rear lamp pixels change. `car_wake.png` retains matching photo water spray, and the renderer positions road shadow/reflection at explicit front and rear tire contacts. At 0 km/h no new spray is emitted. The old independent `Source/Vehicle/car_master.png` is an archived pose reference, not the PURE running sprite. See `docs/01_ASSETS.md`.
 
 ## Design invariants
 - SwiftUI shell, Metal/MTKView cinematic background; no WebView cockpit.
