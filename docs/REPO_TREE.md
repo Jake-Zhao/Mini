@@ -25,20 +25,20 @@ Mini/
 │       └── ShaderTypes.h
 ├── Source/
 │   ├── Vehicle/
-│   │   ├── car_master.png              REQUIRED transparent 2172×724 (in art ZIP)
-│   │   ├── rear_original.png           REQUIRED original 676×451 source (in art ZIP)
+│   │   ├── car_master.png              source archive; NOT PURE runtime actor
+│   │   ├── rear_original.png           archival source pose reference
 │   │   ├── registration.json           authoring/coverage registration
 │   │   └── README.md                   source master identity
 │   ├── Materials/recipe.json           deterministic road/wall/noise inputs
 │   └── Typography/metrics.json         generator metadata; no external font files
 ├── Reference/
-│   └── APPROVED.png                    REQUIRED 1774×887 visual gate (in art ZIP)
+│   └── APPROVED.png                    REQUIRED 1774×887 visual gate + car-camera art source
 ├── Config/
 │   ├── scene.json                      authoritative lens, wet-road and vehicle staging
 │   └── render_graph.json               render pass data contract
 ├── Resources/
 │   ├── Config/{scene,assets,glyphs}.json  runtime manifest (compiler refreshes)
-│   └── Art/                            11 PNG + 11 JTX derived textures (compiler output, ignored)
+│   └── Art/                            14 PNG + 14 JTX derived textures (compiler output, ignored)
 ├── tools/
 │   ├── build_assets.py                 deterministic high-resolution asset pipeline
 │   ├── build_app_icons.py              no-font app icon generator
@@ -67,3 +67,11 @@ The **three image masters** are *not* generable from procedural recipes. They ar
 - Xcode project file: regenerated and passed `plutil -lint` on the available environment.
 - Xcode/iPhone/real OBD: NOT RUN.
 - Visual quality vs approved image: NOT ACCEPTED without native Metal evidence.
+
+
+## 2026-10-28 · Canonical car pipeline
+- `tools/build_road_car_from_approved.py` extracts only the right-side companion car from `Reference/APPROVED.png`; it writes the exact-pose normal/brake art, wheel wake, shadow, lamp emissions and `Source/Vehicle/runtime_registration.json`.
+- `tools/build_assets.py` calls that single builder; the obsolete studio-angle runtime builder has been removed.
+- The 14 runtime textures include `car_cruise`, `car_brake`, `car_wake`, `contact_shadow`, and rear-lamp light masks. The rest of the previously approved art is unchanged.
+- `Renderer/JakeRenderer.swift` and `Renderer/Shaders/JakeShaders.metal` use identical `carRect` and contact anchors across cruise/brake. At 0 km/h, new photo wake is suppressed.
+- Before shipping, inspect actual iOS Metal frames. A browser or Python composite does not count as native GPU acceptance.
