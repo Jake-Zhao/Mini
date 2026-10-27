@@ -33,7 +33,7 @@ HUD is never part of background blur, DOF, bloom, or temporal history.
 - horizon = 0.61H
 - tunnel half width = 6.5 m (art space)
 - arch height = 4.2 m (art space)
-- car staging = x 3.50 m, z 8.00 m, proxy width 1.65 m
+- car staging = x 4.30 m, z 10.00 m, proxy width 2.35 m, anchorY 0.82
 - shutter = 12.5 ms
 - default temporal samples = 9; expensive reference = 33
 
@@ -63,9 +63,9 @@ shutterDistance = mps * 0.0125
 0 km/h freezes decorative scene travel, rain drift, spray, and speed streaks. 100 km/h has exactly five times the distance/exposure displacement of 20 km/h over equal time. Frame rate never changes the virtual shutter length.
 
 ## Car
-The runtime-quality master is Source/Vehicle/car_master.png, a 2172×724 transparent approved static asset. It compiles to a 1400×521 linear-premultiplied sprite. Brake emission is extracted only from explicit tail-lamp regions, so the red wing and body stripe are never treated as brake lamps. The user-supplied rear photograph remains a provenance/pose source.
+For PURE runtime, **the only source of companion-car camera pose is the vehicle already inside `Reference/APPROVED.png`**, the same approved wet-road shot. `tools/build_road_car_from_approved.py` extracts a fixed crop and creates a 1050×655 linear-premultiplied sprite. The distinct `car_cruise` and `car_brake` differ only within two tail-lamp masks; body pixels, wheel placement, license plate, spoiler and alpha are identical. The wheel-wake image is cropped from this very same rainy-road source and only rendered when speed > 0. The independent `Source/Vehicle/car_master.png` and original rear photo are retained for provenance and are no longer used in the PURE runtime because their camera angle does not share the approved road shot.
 
-The car is a fixed-view photographic impostor, not a 3D mesh. Integration comes from shared camera projection, contact shadow, proxy road reflection, fog/transmittance, and spray depth rejection—not fake arbitrary relighting.
+The car is still a fixed-view photographic impostor, not a 3D mesh. Its projection is calibrated to a scene contact anchor (x=4.3 m, z=10.0 m, proxyWidth=2.35 m, contactY=0.82), with explicit front/rear wheel footprints. The ground shadow and reflection follow the wheel-contact line, and camera-matched photographic water plus a limited GPU wake are speed-controlled. This is a constrained cinematic composite, NOT a complete physically based fluid simulator or full car geometry. The final native Metal output must still be inspected before visual acceptance.
 
 ## Hero glyphs
 There is no system-font choice for the speed. The JAKE PERFORMANCE BRUSH system covers 0–9, D/N/P/R and dash. 7 and 2 are extracted from the approved baseline's own painted strokes; remaining glyphs use the same italic direction, stroke mass, distressed edge logic, ivory surface and green reflected-light treatment. Runtime metrics are fixed in Resources/Config/glyphs.json.
