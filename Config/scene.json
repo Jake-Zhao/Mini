@@ -23,13 +23,13 @@
     "lampPeriodMetres": 8
   },
   "vehicle": {
-    "positionXMetres": 3.5,
-    "positionZMetres": 8,
-    "proxyWidthMetres": 1.65,
-    "textureWidth": 1400,
-    "textureHeight": 521,
-    "contactY": 0.92,
-    "sourceType": "approved high-resolution transparent static car master; NOT a 3D vehicle mesh"
+    "positionXMetres": 4.3,
+    "positionZMetres": 10,
+    "proxyWidthMetres": 2.35,
+    "textureWidth": 1050,
+    "textureHeight": 655,
+    "contactY": 0.82,
+    "sourceType": "single approved-shot photo sprite with wheel-footprint camera calibration; NOT 3D car geometry"
   },
   "hud": {
     "capHeightFraction": 0.36,
@@ -39,5 +39,5 @@
       0.5
     ]
   },
-  "provenance": "Camera/scene numbers are authored shot parameters. Vehicle proxy dimensions are visual staging parameters, not survey measurements."
+  "provenance": "Camera and staging are authored scene parameters. The cropped vehicle comes from the same approved wet-road shot; it is not another independently generated camera angle."
 }
