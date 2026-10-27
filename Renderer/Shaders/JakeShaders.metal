@@ -70,7 +70,8 @@ constant uint messageBits[96] = {
 fragment half4 environmentFragment(ScreenVertex in [[stage_in]],constant FrameUniforms &u [[buffer(0)]],
     texture2d<float> background [[texture(0)]],texture2d<float> carBody [[texture(1)]],
     texture2d<float> brakeEmission [[texture(2)]],texture2d<float> brakeHalo [[texture(3)]],
-    texture2d<float> binaryGlyphs [[texture(4)]],texture2d<float> flowNoise [[texture(5)]],texture2d<float> contactShadow [[texture(6)]]) {
+    texture2d<float> binaryGlyphs [[texture(4)]],texture2d<float> flowNoise [[texture(5)]],
+    texture2d<float> contactShadow [[texture(6)]],texture2d<float> carWake [[texture(7)]]) {
     float2 uv=in.uv;
     float3 c=background.sample(linearSampler,uv).rgb;
     if(u.tuning.z>0.5) for(int layer=0;layer<2;++layer) {
@@ -91,21 +92,38 @@ fragment half4 environmentFragment(ScreenVertex in [[stage_in]],constant FrameUn
     }
     if(u.tuning.w>0.5) {
         float2 local=(uv-u.carRect.xy)/u.carRect.zw;
-        float ground=u.vehicle.w;
-        float2 c0=(local-float2(.080,.790))*float2(14,48);
-        float2 c1=(local-float2(.478,.920))*float2(10,48);
-        float2 c2=(local-float2(.888,.920))*float2(12,48);
-        float shadow=0.30*max(max(exp(-dot(c0,c0)),exp(-dot(c1,c1))),exp(-dot(c2,c2)));
-        c*=1.0-shadow;
+        // Two measured tire contacts from the SAME approved scene:
+        // near-side forward wheel (.233,.725), rear wheel (.473,.820).
+        // Their ground contact line rises toward the road's vanishing point.
+        float ground=mix(.725,u.vehicle.w,smoothstep(.233,.473,local.x));
+        float2 shadowUV=float2(local.x,clamp((local.y-ground)*5.0+.5,0.0,1.0));
+        float sh=contactShadow.sample(spriteSampler,shadowUV).a;
+        // AO is applied to the road under the wheels, never to the car pixels.
+        c*=1.0-sh*.62;
+
+        // Distorted low-contrast road reflection. It starts at the wheel-contact
+        // plane, not at the bottom of an arbitrary 2D sprite rectangle.
+        float noise=flowNoise.sample(materialSampler,float2(uv.x*3.5,uv.y*12+u.phaseB.z)).r;
         float2 reflectUV=float2(local.x,2.0*ground-local.y);
-        float noise=flowNoise.sample(materialSampler,float2(uv.x*4,uv.y*17+u.phaseB.z)).r;
-        if(local.y>ground&&local.y<ground+.55&&reflectUV.x>0&&reflectUV.x<1){
+        if(local.y>ground&&local.y<ground+.38&&reflectUV.x>0&&reflectUV.x<1){
             float4 rc=float4(0),re=float4(0);
-            for(int j=-2;j<=2;++j){float2 tap=reflectUV+float2(float(j)*.007+(noise-.5)*.012,0);rc+=carBody.sample(spriteSampler,tap)*.2;re+=brakeEmission.sample(spriteSampler,tap)*.2;}
-            float fade=exp(-(local.y-ground)*8.0)*.17;
-            c=c*(1-rc.a*fade)+rc.rgb*float3(.42,.49,.44)*fade;c+=re.rgb*fade*2.0*u.flags.x;
+            for(int j=-2;j<=2;++j){
+                float2 tap=reflectUV+float2(float(j)*.008+(noise-.5)*.018,0);
+                rc+=carBody.sample(spriteSampler,tap)*.2;
+                re+=brakeEmission.sample(spriteSampler,tap)*.2;
+            }
+            float fade=exp(-(local.y-ground)*10.0)*.14;
+            c=c*(1-rc.a*fade)+rc.rgb*float3(.38,.43,.40)*fade;
+            // Brake is an independent verified state, NOT deceleration inferred.
+            c+=re.rgb*fade*2.7*u.flags.x;
         }
         if(all(local>=float2(0))&&all(local<=float2(1))){
+            // Real wet spray is a separate photographic layer, taken from
+            // the same approved camera/crop as the vehicle; not random lines.
+            // A parked car has no new wheel wake.
+            float sprayStrength=smoothstep(0.5,23.0,u.travel.y)*u.flags.y;
+            float4 wake=carWake.sample(spriteSampler,local);
+            c=c*(1.0-wake.a*sprayStrength*.72)+wake.rgb*sprayStrength*.72;
             float4 car=carBody.sample(spriteSampler,local);
             float ambient=0.94+0.06*sin(u.phaseA.x*6.2831853);
             float trans=exp(-u.vehicle.y*.009);
