@@ -43,8 +43,8 @@
     "png": "Art/brake_emission.png",
     "runtime": "Art/brake_emission.jtex",
     "size": [
-      1050,
-      655
+      1230,
+      780
     ],
     "srgb": false,
     "encoding": "linear-premultiplied-f16",
@@ -56,8 +56,8 @@
     "png": "Art/brake_halo.png",
     "runtime": "Art/brake_halo.jtex",
     "size": [
-      1050,
-      655
+      1230,
+      780
     ],
     "srgb": false,
     "encoding": "linear-premultiplied-f16",
@@ -69,8 +69,8 @@
     "png": "Art/car_body.png",
     "runtime": "Art/car_body.jtex",
     "size": [
-      1050,
-      655
+      1230,
+      780
     ],
     "srgb": false,
     "encoding": "linear-premultiplied-f16",
@@ -82,8 +82,8 @@
     "png": "Art/car_brake.png",
     "runtime": "Art/car_brake.jtex",
     "size": [
-      1050,
-      655
+      1230,
+      780
     ],
     "srgb": false,
     "encoding": "linear-premultiplied-f16",
@@ -95,8 +95,8 @@
     "png": "Art/car_cruise.png",
     "runtime": "Art/car_cruise.jtex",
     "size": [
-      1050,
-      655
+      1230,
+      780
     ],
     "srgb": false,
     "encoding": "linear-premultiplied-f16",
@@ -108,8 +108,8 @@
     "png": "Art/car_wake.png",
     "runtime": "Art/car_wake.jtex",
     "size": [
-      1050,
-      655
+      1230,
+      780
     ],
     "srgb": false,
     "encoding": "linear-premultiplied-f16",
