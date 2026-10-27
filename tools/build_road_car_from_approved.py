@@ -121,6 +121,15 @@ def build(reference, art):
     contact=np.zeros((192,512,4),dtype=np.uint8)
     contact[...,3]=np.uint8(np.clip(shadow*255,0,255))
     Image.fromarray(contact,"RGBA").save(art/"contact_shadow.png",optimize=True)
+    registration=dict(
+        source="Reference/APPROVED.png",sourceCrop=list(CROP),
+        sourceCanvas=list(scene.size),runtimeCanvas=list(SIZE),
+        actualTireContacts=[list(v) for v in CONTACTS],
+        brakeChangedPixels=int(changed.sum()),
+        pose="same approved roadway camera; one master for both states")
+    record=Path(__file__).resolve().parents[1]/"Source/Vehicle/runtime_registration.json"
+    record.parent.mkdir(parents=True,exist_ok=True)
+    record.write_text(json.dumps(registration,ensure_ascii=False,indent=2)+"\n")
     return dict(source="Reference/APPROVED.png",sourceCrop=list(CROP),
                 sourceCanvas=list(scene.size),runtimeCanvas=list(SIZE),
                 actualTireContacts=[list(v) for v in CONTACTS],
