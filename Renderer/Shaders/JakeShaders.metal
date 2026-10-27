@@ -112,7 +112,10 @@ fragment half4 environmentFragment(ScreenVertex in [[stage_in]],constant FrameUn
             float3 pm=(car.rgb*float3(.52,.58,.53)*ambient)*trans+float3(.009,.019,.014)*(1-trans)*car.a;
             c=pm+c*(1-car.a);
             float4 lamp=brakeEmission.sample(spriteSampler,local),halo=brakeHalo.sample(spriteSampler,local);
-            c+=(lamp.rgb*4.6+halo.rgb*.65)*u.flags.x;
+            // The selected car_brake texture already contains brighter brake-light pixels.
+// Do not add the same emissive pixels twice. Halo is scene-light spill only;
+// brakeEmission above is used solely to illuminate the wet road proxy reflection.
+c+=halo.rgb*.65*u.flags.x;
         }
     }
     return half4(half3(max(c,float3(0))),1);
