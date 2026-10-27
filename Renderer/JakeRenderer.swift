@@ -81,7 +81,7 @@ brakeCar = try store.require("car_brake")
         func random() -> Float { seed = seed &* 6364136223846793005 &+ 1; return Float((seed >> 33) & 0xffff)/65535 }
         let initial = (0..<384).map { _ -> SprayParticle in
             let s = SIMD4(random(),random(),random(),random())
-            return SprayParticle(position: SIMD4(5.5+s.x*1.4,0.015+s.y*0.15,7.5+s.z*2.5,1),seed:s)
+            return SprayParticle(position: SIMD4(5.5+s.x*0.4,0.015+s.y*0.12,13.5+s.z*2.0,1),seed:s)
         }
         guard let pb = device.makeBuffer(bytes: initial, length: initial.count*MemoryLayout<SprayParticle>.stride, options:.storageModeShared) else { throw RenderError.allocation("particles") }
         particles = pb; particles.label = "GPU water spray instances"
@@ -180,7 +180,10 @@ brakeCar = try store.require("car_brake")
             // All other environment textures and the projected carRect stay identical.
             let selectedEnvironment = [carTexture] + Array(environment.dropFirst())
             try pass(command,"environment",outputs:[t.composed],uniform:ub,
-                     inputs:[options.cinematicDepth ? t.scene:t.blurred] + selectedEnvironment)
+                     // The final texture is the scene's motion/depth G-buffer.
+                            // Shadows, reflections and photographed wake are
+                            // permitted only where the scene's material is road.
+                     inputs:[options.cinematicDepth ? t.scene:t.blurred] + selectedEnvironment + [t.motion])
 
             if visualMPS > 0 && options.carEnabled && q.particleCount>0 {
                 let rp=descriptor([t.composed],load:.load)
