@@ -25,7 +25,7 @@ final class TextureStore {
     let root: URL
     private(set) var textures: [String: MTLTexture] = [:]
     init(device: MTLDevice, queue: MTLCommandQueue, bundle: Bundle = .main) throws {
-        guard let root = bundle.url(forResource: "Resources", withExtension: nil) else { throw RenderError.missing("Resources/") }
+        guard let root = bundle.resourceURL else { throw RenderError.missing("App resources") }
         self.root = root
         let manifest = try JSONDecoder().decode([TextureAsset].self, from: Data(contentsOf: root.appendingPathComponent("Config/assets.json")))
         let command = queue.makeCommandBuffer()

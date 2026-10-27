@@ -14,7 +14,12 @@ for p in sorted(list((R/'App').glob('*.swift'))+list((R/'Renderer').glob('*.swif
  f=file(p.relative_to(R),'sourcecode.metal'if p.suffix=='.metal'else'sourcecode.swift');refs.append(f);sources.append(obj('{isa=PBXBuildFile;fileRef='+f+';}'))
 for p in ['Renderer/Shaders/ShaderTypes.h','Renderer/Shaders/SceneCore.inc','App/Info.plist']:
  refs.append(file(p,'text.plist.xml'if p.endswith('.plist')else'sourcecode.c.h'))
-resource=file('Resources','folder');refs.append(resource);rb=obj('{isa=PBXBuildFile;fileRef='+resource+';}')
+# A root-level Resources/ makes CFBundle treat this flat iOS app as a
+# legacy bundle, hiding its root Info.plist from codesign and simctl install.
+resource_builds=[]
+for directory in ['Resources/Art','Resources/Config']:
+ resource=file(directory,'folder');refs.append(resource)
+ resource_builds.append(obj('{isa=PBXBuildFile;fileRef='+resource+';}'))
 asset=file('App/Assets.xcassets','folder.assetcatalog');refs.append(asset);ab=obj('{isa=PBXBuildFile;fileRef='+asset+';}')
 product=obj('{isa=PBXFileReference;explicitFileType=wrapper.application;includeInIndex=0;path=JakeDriveMetal.app;sourceTree=BUILT_PRODUCTS_DIR;}')
 products=obj('{isa=PBXGroup;children=('+product+',);name=Products;sourceTree="<group>";}')
@@ -23,7 +28,7 @@ package=obj('{isa=XCLocalSwiftPackageReference;relativePath=Core;}')
 pkgdep=obj('{isa=XCSwiftPackageProductDependency;package='+package+';productName=JakeCore;}')
 pkgb=obj('{isa=PBXBuildFile;productRef='+pkgdep+';}')
 sp=obj('{isa=PBXSourcesBuildPhase;buildActionMask=2147483647;files=('+','.join(sources)+',);runOnlyForDeploymentPostprocessing=0;}')
-rp=obj('{isa=PBXResourcesBuildPhase;buildActionMask=2147483647;files=('+rb+','+ab+',);runOnlyForDeploymentPostprocessing=0;}')
+rp=obj('{isa=PBXResourcesBuildPhase;buildActionMask=2147483647;files=('+','.join(resource_builds+[ab])+',);runOnlyForDeploymentPostprocessing=0;}')
 fp=obj('{isa=PBXFrameworksBuildPhase;buildActionMask=2147483647;files=('+pkgb+',);runOnlyForDeploymentPostprocessing=0;}')
 base='CLANG_ENABLE_MODULES=YES;CLANG_ENABLE_OBJC_ARC=YES;IPHONEOS_DEPLOYMENT_TARGET=17.0;SDKROOT=iphoneos;SWIFT_VERSION=5.0;ENABLE_USER_SCRIPT_SANDBOXING=YES;'
 pd=obj('{isa=XCBuildConfiguration;name=Debug;buildSettings={'+base+'DEBUG_INFORMATION_FORMAT=dwarf;GCC_OPTIMIZATION_LEVEL=0;MTL_ENABLE_DEBUG_INFO=INCLUDE_SOURCE;SWIFT_OPTIMIZATION_LEVEL="-Onone";};}')

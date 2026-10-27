@@ -13,6 +13,9 @@ def check():
     for rel in ['App/JakeDriveMetalApp.swift','App/LabModel.swift','App/MetalHost.swift','Renderer/JakeRenderer.swift','Renderer/Shaders/JakeShaders.metal']:
         assert rel in project,f'Project omits {rel}'
     assert 'Resources' in project and 'Core' in project and 'AppIcon' in project
+    assert 'path="Resources";' not in project, 'Root Resources/ hides the iOS Info.plist from CFBundle'
+    for folder in ['Resources/Art','Resources/Config']:
+        assert f'path="{folder}";' in project, f'Project omits resource folder {folder}'
     config=plistlib.loads((ROOT/'App/Info.plist').read_bytes())
     assert config['LSRequiresIPhoneOS'] and config['UIRequiresFullScreen']
     orientations=set(config['UISupportedInterfaceOrientations'])

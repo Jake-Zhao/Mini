@@ -11,7 +11,7 @@ struct SceneSettings: Decodable {
         let referenceSamples: Int, productionSamples: Int
     }
     struct Materials: Decodable {let roadWetRoughness: Double}
-    struct Vehicle: Decodable {let positionXMetres: Double, positionZMetres: Double, proxyWidthMetres: Double, contactY: Double}
+    struct Vehicle: Decodable {let positionXMetres: Double, positionZMetres: Double, proxyWidthMetres: Double, textureWidth: Int, textureHeight: Int, contactY: Double}
     struct HUD: Decodable {let capHeightFraction: Double, maxWidthFraction: Double, heroCenter: [Double]}
     let camera: Camera, optics: Optics, materials: Materials, vehicle: Vehicle, hud: HUD
     init(root: URL) throws {

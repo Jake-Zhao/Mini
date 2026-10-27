@@ -8,28 +8,28 @@
   },
   "optics": {
     "exposureSeconds": 0.0125,
-    "exposureGain": 1.0,
+    "exposureGain": 1,
     "referenceSamples": 33,
     "productionSamples": 9,
-    "bloomGain": 0.08,
-    "maxOutputBlurPixels": 40
+    "bloomGain": 0.07,
+    "maxOutputBlurPixels": 44
   },
   "materials": {
-    "roadTileMetres": 3.0,
+    "roadTileMetres": 3,
     "wallTileMetres": 1.5,
     "waterIOR": 1.333,
     "roadWetRoughness": 0.13,
     "roadDryRoughness": 0.78,
-    "lampPeriodMetres": 8.0
+    "lampPeriodMetres": 8
   },
   "vehicle": {
     "positionXMetres": 3.5,
-    "positionZMetres": 8.0,
+    "positionZMetres": 8,
     "proxyWidthMetres": 1.65,
     "textureWidth": 1400,
     "textureHeight": 521,
     "contactY": 0.92,
-    "sourceType": "fixed-view photographic impostor; NOT a 3D vehicle mesh"
+    "sourceType": "approved high-resolution transparent static car master; NOT a 3D vehicle mesh"
   },
   "hud": {
     "capHeightFraction": 0.36,
@@ -39,5 +39,5 @@
       0.5
     ]
   },
-  "provenance": "All camera and scene dimensions are authored art-direction settings, NOT surveyed vehicle or tunnel measurements."
+  "provenance": "Camera/scene numbers are authored shot parameters. Vehicle proxy dimensions are visual staging parameters, not survey measurements."
 }
