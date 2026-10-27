@@ -71,24 +71,6 @@ def build_materials():
         a=gaussian_filter(a,5,mode='wrap');noise.append((a-a.min())/(a.max()-a.min()))
     save('flow_noise',np.dstack(noise+[np.ones_like(noise[0])]))
 
-def build_car():
-    master=S/'Vehicle/car_master.png'
-    if not master.exists(): raise FileNotFoundError('Source/Vehicle/car_master.png is required; obtain it from the JAKE_DRIVE_CINEMATIC_FINAL distribution package')
-    src=Image.open(master).convert('RGBA');arr=np.asarray(src,dtype=np.float32)/255;alpha=arr[...,3]
-    bbox=src.getchannel('A').getbbox();x0,y0,x1,y1=bbox
-    red=(arr[...,0]>.55)&(arr[...,0]>arr[...,1]*1.45)&(arr[...,0]>arr[...,2]*1.35)&(alpha>.05)
-    region=np.zeros(alpha.shape,bool);region[240:440,1160:1360]=True;region[280:450,1740:1885]=True
-    lamp=(red&region).astype(np.float32);lamp=gaussian_filter(lamp,.55);lamp=np.minimum(lamp,alpha)
-    crop=arr[y0:y1,x0:x1];lampc=lamp[y0:y1,x0:x1]
-    out=resize_srgb_straight(crop,(1400,521));Image.fromarray(np.uint8(np.clip(out,0,1)*255+.5),'RGBA').save(A/'car_body.png')
-    em=np.zeros_like(crop);em[...,0]=1;em[...,1]=.08;em[...,2]=.01;em[...,3]=lampc
-    em=resize_srgb_straight(em,(1400,521));Image.fromarray(np.uint8(np.clip(em,0,1)*255+.5),'RGBA').save(A/'brake_emission.png')
-    halo=gaussian_filter(lampc,8);halo/=max(halo.max(),1e-6);hm=np.zeros_like(crop);hm[...,0]=1;hm[...,1]=.04;hm[...,2]=.01;hm[...,3]=halo*.30
-    hm=resize_srgb_straight(hm,(1400,521));Image.fromarray(np.uint8(np.clip(hm,0,1)*255+.5),'RGBA').save(A/'brake_halo.png')
-    x,y=np.meshgrid(np.linspace(-1,1,512),np.linspace(-1,1,192));sh=np.exp(-(x*x*3+y*y*8))*.36
-    save('contact_shadow',np.dstack([np.zeros_like(sh)]*3+[sh]))
-    (S/'Vehicle/runtime_registration.json').write_text(json.dumps({'source':'car_master.png','sourceSize':list(src.size),'alphaBBox':list(bbox),'runtimeSize':[1400,521],'brakeRegionsSource':[[1160,240,1360,440],[1740,280,1885,450]],'note':'explicit tail-lamp regions; silhouette comes from approved alpha, never a brightness threshold'},indent=2))
-
 # JAKE PERFORMANCE BRUSH GLYPH SYSTEM
 # 7 and 2 are extracted from the approved baseline's painted strokes.
 # Remaining glyphs share the same italic angle, stroke mass and distressed-paint logic.
