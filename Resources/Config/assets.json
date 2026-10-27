@@ -78,6 +78,32 @@
     "mipmaps": true
   },
   {
+    "name": "car_cruise",
+    "png": "Art/car_cruise.png",
+    "runtime": "Art/car_cruise.jtex",
+    "size": [
+      1400,
+      521
+    ],
+    "srgb": false,
+    "encoding": "linear-premultiplied-f16",
+    "alpha": "linear-premultiplied",
+    "mipmaps": true
+  },
+  {
+    "name": "car_brake",
+    "png": "Art/car_brake.png",
+    "runtime": "Art/car_brake.jtex",
+    "size": [
+      1400,
+      521
+    ],
+    "srgb": false,
+    "encoding": "linear-premultiplied-f16",
+    "alpha": "linear-premultiplied",
+    "mipmaps": true
+  },
+  {
     "name": "concrete_color",
     "png": "Art/concrete_color.png",
     "runtime": "Art/concrete_color.jtex",
