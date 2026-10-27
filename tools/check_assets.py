@@ -8,7 +8,7 @@ MASTERS={
  'Source/Vehicle/rear_original.png':('0377d987c9a3c66ed1b040e5b60ed96affcc4edaf8c650303698aa1c59e723d5',(676,451)),
  'Reference/APPROVED.png':('da8498daf0c5effce4c5654e34cec7de95c4b85af62f8a7eb25af608c276deed',(1774,887))
 }
-NAMES={'asphalt_color','asphalt_surface','binary_glyphs','brake_emission','brake_halo','car_body','concrete_color','concrete_surface','contact_shadow','flow_noise','glyph_atlas'}
+NAMES={'asphalt_color','asphalt_surface','binary_glyphs','brake_emission','brake_halo','car_body','car_cruise','car_brake','concrete_color','concrete_surface','contact_shadow','flow_noise','glyph_atlas'}
 GLYPHS=set('0123456789DNPR-')
 def check_sources():
  from PIL import Image
@@ -42,6 +42,18 @@ def check_runtime():
   png=ROOT/'Resources'/a['png']
   with Image.open(png) as im: assert list(im.size)==a['size'],name
   print('RUNTIME OK',name,w,h)
+ # The two camera-angle states must be pixel registered. No wheel, body,
+ # silhouette, spoiler, plate or alpha changes are allowed by brake activation.
+ off=np.asarray(Image.open(ROOT/'Resources/Art/car_cruise.png').convert('RGBA'))
+ on=np.asarray(Image.open(ROOT/'Resources/Art/car_brake.png').convert('RGBA'))
+ emission=np.asarray(Image.open(ROOT/'Resources/Art/brake_emission.png').convert('RGBA'))
+ assert off.shape==on.shape==emission.shape
+ assert np.array_equal(off[...,3],on[...,3]),'car silhouette / alpha changes between states'
+ changed=np.any(off[...,:3]!=on[...,:3],axis=2)
+ mask=emission[...,3]>0
+ assert np.any(changed),'brake state is visually identical'
+ assert not np.any(changed & ~mask),'car changes outside tail lamps (wrong angle/crop)'
+ print('CAR STATE ALIGNMENT PASS:',int(changed.sum()),'tail-lamp pixels changed, alpha identical')
  g=json.loads((ROOT/'Resources/Config/glyphs.json').read_text())
  assert set(g)==GLYPHS,'Glyph count mismatch'
  for key,v in g.items():
