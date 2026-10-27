@@ -27,7 +27,7 @@ final class JakeRenderer: NSObject, MTKViewDelegate {
     private var captureRequest: ((Result<URL,Error>) -> Void)?
     private var runtimeStopped = false
     private let clearBloom: MTLTexture
-    private let material: [MTLTexture], environment: [MTLTexture], glyphAtlas: MTLTexture
+    private let material: [MTLTexture], environment: [MTLTexture], brakeCar: MTLTexture, glyphAtlas: MTLTexture
     private var lastEpoch: UInt64?
 
     init(view: MTKView, mailbox: TelemetryMailbox) throws {
@@ -38,7 +38,10 @@ final class JakeRenderer: NSObject, MTKViewDelegate {
         settings = try SceneSettings(root: store.root)
         metrics = try JSONDecoder().decode([String: GlyphMetric].self, from: Data(contentsOf: store.root.appendingPathComponent("Config/glyphs.json")))
         material = try ["asphalt_color","asphalt_surface","concrete_color","concrete_surface","flow_noise"].map { try store.require($0) }
-        environment = try ["car_body","brake_emission","brake_halo","binary_glyphs","flow_noise","contact_shadow"].map { try store.require($0) }
+        // Both states derive from ONE high-resolution master with one crop and one UV frame.
+// Choosing a texture never changes the car's angle, scale, wheel placement or shadow.
+environment = try ["car_cruise","brake_emission","brake_halo","binary_glyphs","flow_noise","contact_shadow"].map { try store.require($0) }
+brakeCar = try store.require("car_brake")
         glyphAtlas = try store.require("glyph_atlas")
         precondition(MemoryLayout<FrameUniforms>.stride == 224)
         precondition(MemoryLayout<SpriteInstance>.stride == 48 && MemoryLayout<SprayParticle>.stride == 32)
@@ -170,7 +173,12 @@ final class JakeRenderer: NSObject, MTKViewDelegate {
             try pass(command,"scene",outputs:[t.scene,t.motion,t.material],uniform:ub,inputs:material)
             try pass(command,"motion",outputs:[t.blurred],uniform:ub,inputs:[t.scene,t.motion])
             if options.cinematicDepth { try pass(command,"focus",outputs:[t.scene],uniform:ub,inputs:[t.blurred,t.motion]) }
-            try pass(command,"environment",outputs:[t.composed],uniform:ub,inputs:[options.cinematicDepth ? t.scene:t.blurred]+environment)
+            let carTexture = hud.brakeOn ? brakeCar : environment[0]
+            // The companion car is drawn once; only its taillight material changes.
+            // All other environment textures and the projected carRect stay identical.
+            let selectedEnvironment = [carTexture] + Array(environment.dropFirst())
+            try pass(command,"environment",outputs:[t.composed],uniform:ub,
+                     inputs:[options.cinematicDepth ? t.scene:t.blurred] + selectedEnvironment)
 
             if visualMPS > 0 && options.carEnabled && q.particleCount>0 {
                 let rp=descriptor([t.composed],load:.load)
