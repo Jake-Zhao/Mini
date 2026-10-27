@@ -40,7 +40,9 @@ final class JakeRenderer: NSObject, MTKViewDelegate {
         material = try ["asphalt_color","asphalt_surface","concrete_color","concrete_surface","flow_noise"].map { try store.require($0) }
         // Both states derive from ONE high-resolution master with one crop and one UV frame.
 // Choosing a texture never changes the car's angle, scale, wheel placement or shadow.
-environment = try ["car_cruise","brake_emission","brake_halo","binary_glyphs","flow_noise","contact_shadow"].map { try store.require($0) }
+// Splash and shadows are derived from the same approved camera frame.
+environment = try ["car_cruise","brake_emission","brake_halo",
+                   "binary_glyphs","flow_noise","contact_shadow","car_wake"].map { try store.require($0) }
 brakeCar = try store.require("car_brake")
         glyphAtlas = try store.require("glyph_atlas")
         precondition(MemoryLayout<FrameUniforms>.stride == 224)
