@@ -9,7 +9,7 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFilter
 from scipy.ndimage import gaussian_filter
 import cv2
-from build_companion_states import build as build_companion_states
+from build_road_car_from_approved import build as build_road_car
 
 R=Path(__file__).resolve().parents[1]
 A=R/'Resources/Art'; S=R/'Source'
@@ -146,7 +146,7 @@ def build_glyphs():
     bit=Image.new('RGBA',(128,96));d=ImageDraw.Draw(bit);d.rounded_rectangle((13,14,49,80),radius=12,outline=(130,219,166,255),width=5);d.line([(82,30),(95,15),(95,79)],fill=(130,219,166,255),width=5);d.line((84,80,108,80),fill=(130,219,166,255),width=5);bit.save(A/'binary_glyphs.png')
 
 def pack():
-    sprites={'car_body','car_cruise','car_brake','brake_emission','brake_halo','contact_shadow','glyph_atlas','binary_glyphs'}
+    sprites={'car_body','car_cruise','car_brake','car_wake','brake_emission','brake_halo','contact_shadow','glyph_atlas','binary_glyphs'}
     manifest=[]
     for p in sorted(A.glob('*.png')):
         name=p.stem;im=Image.open(p).convert('RGBA');a=np.array(im,dtype=np.float32)/255
@@ -162,5 +162,5 @@ def pack():
     print('Compiled',len(manifest),'textures; runtime sprites premultiplied in linear light BEFORE filtering.')
 
 if __name__=='__main__':
-    build_materials();build_car();build_companion_states(A);build_glyphs();pack()
+    build_materials();build_road_car(R/'Reference/APPROVED.png',A);build_glyphs();pack()
     shutil.copyfile(R/'Config/scene.json',R/'Resources/Config/scene.json')
