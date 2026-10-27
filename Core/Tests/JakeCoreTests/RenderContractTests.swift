@@ -14,8 +14,8 @@ final class RenderContractTests: XCTestCase {
     func testRejectBehindCamera() {XCTAssertNil(SceneCamera().project(x:0,y:0,z:-1,aspect:2))}
     func testCarGroundRegistration() throws {
         let c=SceneCamera();let f=c.vehicleFrame(width:1774,height:887)
-        let uv=try XCTUnwrap(c.project(x:4.30,y:0,z:10.00,aspect:2))
-        XCTAssertEqual((f.y+f.height*0.820)/887,uv.1,accuracy:1e-10)
+        let uv=try XCTUnwrap(c.project(x:5.77,y:0,z:13.00,aspect:2))
+        XCTAssertEqual((f.y+f.height*0.806)/887,uv.1,accuracy:1e-10)
         XCTAssertEqual((f.x+f.width*0.52)/1774,uv.0,accuracy:1e-10)
     }
     func testShutterDoesNotDependOnFrameRate() throws {
@@ -51,8 +51,8 @@ final class RenderContractTests: XCTestCase {
         let width=1774.0, height=887.0
         let f=camera.vehicleFrame(width:width,height:height)
         let foot=try XCTUnwrap(camera.project(x:4.30,y:0,z:10.0,aspect:width/height))
-        XCTAssertEqual(f.width/f.height,1050.0/655.0,accuracy:1e-10)
-        XCTAssertEqual((f.y+f.height*0.820)/height,foot.1,accuracy:1e-10)
+        XCTAssertEqual(f.width/f.height,1230.0/780.0,accuracy:1e-10)
+        XCTAssertEqual((f.y+f.height*0.806)/height,foot.1,accuracy:1e-10)
         XCTAssertEqual((f.x+f.width*0.52)/width,foot.0,accuracy:1e-10)
         XCTAssertGreaterThan(foot.1,camera.horizon)
         XCTAssertGreaterThan(f.x,width*0.68)
