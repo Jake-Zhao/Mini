@@ -71,7 +71,8 @@ fragment half4 environmentFragment(ScreenVertex in [[stage_in]],constant FrameUn
     texture2d<float> background [[texture(0)]],texture2d<float> carBody [[texture(1)]],
     texture2d<float> brakeEmission [[texture(2)]],texture2d<float> brakeHalo [[texture(3)]],
     texture2d<float> binaryGlyphs [[texture(4)]],texture2d<float> flowNoise [[texture(5)]],
-    texture2d<float> contactShadow [[texture(6)]],texture2d<float> carWake [[texture(7)]]) {
+    texture2d<float> contactShadow [[texture(6)]],texture2d<float> carWake [[texture(7)]],
+    texture2d<float> sceneInfo [[texture(8)]]) {
     float2 uv=in.uv;
     float3 c=background.sample(linearSampler,uv).rgb;
     if(u.tuning.z>0.5) for(int layer=0;layer<2;++layer) {
@@ -92,50 +93,50 @@ fragment half4 environmentFragment(ScreenVertex in [[stage_in]],constant FrameUn
     }
     if(u.tuning.w>0.5) {
         float2 local=(uv-u.carRect.xy)/u.carRect.zw;
-        // Two measured tire contacts from the SAME approved scene:
-        // near-side forward wheel (.233,.725), rear wheel (.473,.820).
-        // Their ground contact line rises toward the road's vanishing point.
-        float ground=mix(.725,u.vehicle.w,smoothstep(.233,.473,local.x));
-        float2 shadowUV=float2(local.x,clamp((local.y-ground)*5.0+.5,0.0,1.0));
-        float sh=contactShadow.sample(spriteSampler,shadowUV).a;
-        // AO is applied to the road under the wheels, never to the car pixels.
-        c*=1.0-sh*.62;
-
-        // Distorted low-contrast road reflection. It starts at the wheel-contact
-        // plane, not at the bottom of an arbitrary 2D sprite rectangle.
-        float noise=flowNoise.sample(materialSampler,float2(uv.x*3.5,uv.y*12+u.phaseB.z)).r;
-        float2 reflectUV=float2(local.x,2.0*ground-local.y);
-        if(local.y>ground&&local.y<ground+.38&&reflectUV.x>0&&reflectUV.x<1){
+        bool inCarRegion=all(local>=float2(0))&&all(local<=float2(1));
+        // G-buffer surface ID 0 = actual road; never cast tyre shadows onto
+        // tiled tunnel walls, the sky or the UI.
+        float road=(sceneInfo.sample(linearSampler,uv).w<0.5)?1.0:0.0;
+        float speedFactor=clamp(u.travel.y/27.777778,0.0,1.25);
+        // The same two photographed tyre contacts are compiled into the
+        // contactShadow/wake textures; no guessed third wheel anchor.
+        float contactY=mix(.727,.788,smoothstep(.166,.493,local.x));
+        if(inCarRegion&&road>.5) {
+            float shade=contactShadow.sample(spriteSampler,local).a;
+            c*=1.0-shade*.73;
+            // The wake is photographed at the wheels, so it inherits exactly
+            // their perspective and disappears naturally when speed is zero.
+            float strength=smoothstep(.8,26.0,u.travel.y)*u.flags.y;
+            float4 water=carWake.sample(spriteSampler,local);
+            c=c*(1.0-water.a*strength)+water.rgb*strength;
+        }
+        // Rippled road reflection is attached to the contact curve and
+        // samples the selected on/off car material, never an unrelated photo.
+        float2 flipped=float2(local.x,2.0*contactY-local.y);
+        if(inCarRegion && road>.5 &&
+           local.y>contactY && local.y<contactY+.38 &&
+           flipped.y>0 && flipped.y<1) {
+            float noise=flowNoise.sample(materialSampler,float2(uv.x*3.5,uv.y*12+u.phaseB.z)).r;
             float4 rc=float4(0),re=float4(0);
-            for(int j=-2;j<=2;++j){
-                float2 tap=reflectUV+float2(float(j)*.008+(noise-.5)*.018,0);
+            for(int j=-2;j<=2;++j) {
+                float2 tap=flipped+float2(float(j)*.006+(noise-.5)*.012,0);
                 rc+=carBody.sample(spriteSampler,tap)*.2;
                 re+=brakeEmission.sample(spriteSampler,tap)*.2;
             }
-            float fade=exp(-(local.y-ground)*10.0)*.14;
-            c=c*(1-rc.a*fade)+rc.rgb*float3(.38,.43,.40)*fade;
-            // Brake is an independent verified state, NOT deceleration inferred.
-            c+=re.rgb*fade*2.7*u.flags.x;
+            float fade=exp(-(local.y-contactY)*10.0)*.16;
+            c=c*(1-rc.a*fade)+rc.rgb*float3(.50,.55,.52)*fade;
+            c+=re.rgb*fade*2.6*u.flags.x;
         }
-        if(all(local>=float2(0))&&all(local<=float2(1))){
-            // Real wet spray is a separate photographic layer, taken from
-            // the same approved camera/crop as the vehicle; not random lines.
-            // A parked car has no new wheel wake.
-            float sprayStrength=smoothstep(0.5,23.0,u.travel.y)*u.flags.y;
-            float4 wake=carWake.sample(spriteSampler,local);
-            c=c*(1.0-wake.a*sprayStrength*.72)+wake.rgb*sprayStrength*.72;
+        if(inCarRegion) {
             float4 car=carBody.sample(spriteSampler,local);
-            // The vehicle is taken from the actual approved scene; it already
-            // contains environment light. Preserve its photographic colors and
-            // use only a slight distance fog, never oscillating relighting.
-            float trans=exp(-u.vehicle.y*.004);
-            float3 pm=car.rgb*trans+float3(.009,.019,.014)*(1.0-trans)*car.a;
-            c=pm+c*(1-car.a);
-            float4 lamp=brakeEmission.sample(spriteSampler,local),halo=brakeHalo.sample(spriteSampler,local);
-            // The selected car_brake texture already contains brighter brake-light pixels.
-// Do not add the same emissive pixels twice. Halo is scene-light spill only;
-// brakeEmission above is used solely to illuminate the wet road proxy reflection.
-c+=halo.rgb*.65*u.flags.x;
+            // The painted car already contains the approved tunnel's incident
+            // light; avoid dark fake oscillating RGB "relighting".
+            float trans=exp(-u.vehicle.y*.0035);
+            float3 photographic=car.rgb*trans+
+                float3(.009,.019,.014)*(1.0-trans)*car.a;
+            c=photographic+c*(1-car.a);
+            float4 halo=brakeHalo.sample(spriteSampler,local);
+            c+=halo.rgb*.65*u.flags.x;
         }
     }
     return half4(half3(max(c,float3(0))),1);
@@ -169,11 +170,26 @@ fragment half4 outputFragment(ScreenVertex in [[stage_in]],constant FrameUniform
     if(u.flags.z>4.5&&u.flags.z<5.5){float id=mat.z;return half4(half(id<.5),half(id>.5),0,1);}
     return half4(half3(jdACES(c*u.optics.y)),1);
 }
-kernel void advanceSpray(device Particle *particles [[buffer(0)]],constant FrameUniforms &u [[buffer(1)]],uint id [[thread_position_in_grid]]){
- if(id>=384||u.flags.y<.5)return;
- Particle p=particles[id];p.position.z-=u.travel.z*.42;p.position.y+=u.travel.w*(.02+p.seed.y*.09);
- if(p.position.z<u.vehicle.y-3.5||p.position.y>.30){p.position.z=u.vehicle.y-.30-p.seed.z*.65;p.position.y=.012;p.position.x=u.vehicle.x-1.4+p.seed.x*1.45;}
- particles[id]=p;
+kernel void advanceSpray(device Particle *particles [[buffer(0)]],
+    constant FrameUniforms &u [[buffer(1)]],
+    uint id [[thread_position_in_grid]]) {
+    if(id>=384 || u.flags.y<.5 || u.travel.w<=0) return;
+    Particle p=particles[id];
+    float speed=clamp(u.travel.y/27.777778,0.0,1.2);
+    float life=fract(p.position.w +
+                     u.travel.w*(0.48+speed*.85)*(.75+p.seed.z*.5));
+    bool rear=p.seed.w>.5;
+    // Calibrated in world metres by unprojecting the APPROVED photographed
+    // front/rear tyre contacts. Both touch the same y=0 road plane.
+    float3 tyre=rear ? float3(5.88,.015,13.5) :
+                       float3(5.28,.015,15.5);
+    float laneSpread=(p.seed.x-.5)*(.12+.18*speed)*life;
+    float throwBack=life*(.12+.66*speed);
+    p.position.xyz=float3(tyre.x+laneSpread,
+                          tyre.y + (.06+.20*speed)*sin(life*3.14159)*p.seed.y,
+                          tyre.z-throwBack);
+    p.position.w=life;
+    particles[id]=p;
 }
 struct ParticleOut{float4 position [[position]];float2 uv;float2 screenUV;float depth;float alpha;};
 vertex ParticleOut sprayVertex(uint vertexID [[vertex_id]],uint instanceID [[instance_id]],constant FrameUniforms &u [[buffer(0)]],device const Particle *p [[buffer(1)]]){
