@@ -46,4 +46,18 @@ final class RenderContractTests: XCTestCase {
         XCTAssertTrue(separated)
         XCTAssertEqual(hero.midX,w*0.5,accuracy:0.00001)
     }
+    func testApprovedCompanionPoseProjectsOntoRightRoadLane() throws {
+        let camera=SceneCamera()
+        let width=1774.0, height=887.0
+        let f=camera.vehicleFrame(width:width,height:height)
+        let foot=try XCTUnwrap(camera.project(x:4.30,y:0,z:10.0,aspect:width/height))
+        XCTAssertEqual(f.width/f.height,1050.0/655.0,accuracy:1e-10)
+        XCTAssertEqual((f.y+f.height*0.820)/height,foot.1,accuracy:1e-10)
+        XCTAssertEqual((f.x+f.width*0.52)/width,foot.0,accuracy:1e-10)
+        XCTAssertGreaterThan(foot.1,camera.horizon)
+        XCTAssertGreaterThan(f.x,width*0.68)
+        XCTAssertLessThan(f.x+f.width,width)
+        XCTAssertGreaterThan(f.y,height*0.5)
+    }
+
 }
