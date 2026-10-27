@@ -1,0 +1,32 @@
+{
+  "source": "car_master.png",
+  "sourceSize": [
+    2172,
+    724
+  ],
+  "alphaBBox": [
+    106,
+    0,
+    2051,
+    724
+  ],
+  "runtimeSize": [
+    1400,
+    521
+  ],
+  "brakeRegionsSource": [
+    [
+      1160,
+      240,
+      1360,
+      440
+    ],
+    [
+      1740,
+      280,
+      1885,
+      450
+    ]
+  ],
+  "note": "explicit tail-lamp regions; alpha from source"
+}

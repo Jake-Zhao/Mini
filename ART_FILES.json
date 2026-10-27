@@ -1,0 +1,224 @@
+{
+  "name": "JAKE_DRIVE_CINEMATIC_FINAL.zip",
+  "verified_reference": "Reference/APPROVED.png",
+  "mandatory_files": 3,
+  "derived_texture_pairs": 11,
+  "glyph_count": 15,
+  "binary_files": [
+    {
+      "path": "Reference/APPROVED.png",
+      "size": 2218535,
+      "sha256": "da8498daf0c5effce4c5654e34cec7de95c4b85af62f8a7eb25af608c276deed"
+    },
+    {
+      "path": "Source/Vehicle/car_master.png",
+      "size": 1495046,
+      "sha256": "ca8006f4efe1ab3a0f40a4a72a7161eb0ef1744374dc2589756f6dc32aabc9ee"
+    },
+    {
+      "path": "Source/Vehicle/rear_original.png",
+      "size": 176227,
+      "sha256": "0377d987c9a3c66ed1b040e5b60ed96affcc4edaf8c650303698aa1c59e723d5"
+    },
+    {
+      "path": "Source/Vehicle/plate.png",
+      "size": 10201,
+      "sha256": "291b5855eb9cd5ee9c52bf85c05964ebc50b1e4467e635f58b7fc6ae48748ed1"
+    },
+    {
+      "path": "Source/Vehicle/silhouette_mask.png",
+      "size": 6664,
+      "sha256": "29562f22324b6d9f9d491712c2da4f7990658d077b7f8fa508ad16605330320d"
+    },
+    {
+      "path": "Source/Vehicle/paint_mask.png",
+      "size": 7590,
+      "sha256": "a9996ebc95f7d58f9589accba482aa166f202f59f6e1b695cc276adc4a7d9706"
+    },
+    {
+      "path": "Source/Vehicle/brake_mask.png",
+      "size": 1242,
+      "sha256": "f7baf06836f123badd4aa8f743e2669769a7b80f93259073dddd24b50f83c731"
+    },
+    {
+      "path": "Source/Vehicle/runtime_registration.json",
+      "size": 376,
+      "sha256": "07458f6d7dcf7e64e4fe19d74a126b229f46a24606f8601a72291b2ab58dccc2"
+    },
+    {
+      "path": "Resources/Art/binary_glyphs.png",
+      "size": 549,
+      "sha256": "5a176c4575fdf2f13d82cf864a9ff8bd5abd6bb1206c345c22fdb8f567cc7ec4"
+    },
+    {
+      "path": "Resources/Art/concrete_color.png",
+      "size": 462032,
+      "sha256": "ee3c1944e34a191543aac822663ae0660764c40b21e1e849ba0098d7aefd5fab"
+    },
+    {
+      "path": "Resources/Art/asphalt_surface.png",
+      "size": 1602621,
+      "sha256": "5b28b13f5be6b07e12410eb944d53f5d1917848dca799859ae5ed5d75c002b6e"
+    },
+    {
+      "path": "Resources/Art/contact_shadow.png",
+      "size": 7387,
+      "sha256": "f14ddde9993e77e292d7053d032d5b63a54816dfde979470b460a19734968992"
+    },
+    {
+      "path": "Resources/Art/asphalt_color.png",
+      "size": 1286214,
+      "sha256": "5dff97cb44129972054b44079571e72e7bff32fcd55778aff01bbe85eb85bb63"
+    },
+    {
+      "path": "Resources/Art/flow_noise.png",
+      "size": 382670,
+      "sha256": "23b1fbb7db9ff57387ec18e87dbc44064028104bb48572efa0247eb61f8b46e2"
+    },
+    {
+      "path": "Resources/Art/brake_halo.png",
+      "size": 10692,
+      "sha256": "85fa5aede31d481202137080e7979d31654143aeea403a4daca8571a8d91abdf"
+    },
+    {
+      "path": "Resources/Art/glyph_atlas.png",
+      "size": 2499685,
+      "sha256": "238f62522aec498d40010ac9b723777d98160e884df47a27eb8d58d932474007"
+    },
+    {
+      "path": "Resources/Art/car_body.png",
+      "size": 837813,
+      "sha256": "c749fd6583c93b258c85b63724ba38018c9d3674dddd84b8d406fc998bfcb4cd"
+    },
+    {
+      "path": "Resources/Art/brake_emission.png",
+      "size": 12735,
+      "sha256": "6c1ba7f7e4073ff2925930f227205f389b92e24c32d5faf5ad1e8ce16f8768e9"
+    },
+    {
+      "path": "Resources/Art/concrete_surface.png",
+      "size": 707822,
+      "sha256": "da226de7ef9fa9749ad13dd8718878638bfd96b7ababea7e183cd2bdd1d78a42"
+    },
+    {
+      "path": "Resources/Art/concrete_color.jtex",
+      "size": 4194316,
+      "sha256": "f8ab08e420a59de9fb381e59ed160aced4eb9480e8c669b1e9bc5403e736498a"
+    },
+    {
+      "path": "Resources/Art/glyph_atlas.jtex",
+      "size": 67108876,
+      "sha256": "b1a0c0ec59e961aa55d4df13caee7f180ac54d2a412e9a20a7668f643e2d807a"
+    },
+    {
+      "path": "Resources/Art/concrete_surface.jtex",
+      "size": 4194316,
+      "sha256": "7eab5c238e4014b5224eff7ec42850810f5efcc4ce3f7ea4154d295d2c4f325e"
+    },
+    {
+      "path": "Resources/Art/contact_shadow.jtex",
+      "size": 786444,
+      "sha256": "149e6d5bac1a04e2fd157ee919015a60108ca8f491b071511df20b26f5a68f7e"
+    },
+    {
+      "path": "Resources/Art/car_body.jtex",
+      "size": 5835212,
+      "sha256": "1addcd332973a41785e15bc1906efa99f3ab1f676faf3be0136b3eb8571a8cb8"
+    },
+    {
+      "path": "Resources/Art/binary_glyphs.jtex",
+      "size": 98316,
+      "sha256": "5ccc0a2224351111dc74c8d9c16a8b52a285036542e770c399cd54d29be980b8"
+    },
+    {
+      "path": "Resources/Art/asphalt_surface.jtex",
+      "size": 4194316,
+      "sha256": "fb5d39249a956c6932ad55ac3fbd1a9a8b2c1afafb649b7d1de40bc6e44eefcb"
+    },
+    {
+      "path": "Resources/Art/brake_emission.jtex",
+      "size": 5835212,
+      "sha256": "1f735c9c2a13cfc683697b9e45cba88d8a95ece0e72f95b04120fe1f2d4803bc"
+    },
+    {
+      "path": "Resources/Art/asphalt_color.jtex",
+      "size": 4194316,
+      "sha256": "62552ac1580e0dfff64048fc853af9d29f74c08e40289f7402b935252ff6e2ff"
+    },
+    {
+      "path": "Resources/Art/flow_noise.jtex",
+      "size": 1048588,
+      "sha256": "13bbd9c01a076da36b4e3c3188b8a835b646b06c364041fb24d9ffedc9344e24"
+    },
+    {
+      "path": "Resources/Art/brake_halo.jtex",
+      "size": 5835212,
+      "sha256": "42da24c75676898a4855489c24c042633603a1019e7d2f6fddc09738022ae213"
+    },
+    {
+      "path": "Resources/Config/assets.json",
+      "size": 2875,
+      "sha256": "2d0b56fba35aac9b7a4debc0eff086a5e92554f056860962497797e3679bee85"
+    },
+    {
+      "path": "Resources/Config/glyphs.json",
+      "size": 2992,
+      "sha256": "4989232b1080f41720113f4ab6337e9417595dc9f007ef25a98527b0a4e4d335"
+    },
+    {
+      "path": "Resources/Config/scene.json",
+      "size": 1053,
+      "sha256": "b313bc0f2749458926b0dce1fd96966abf1e4838e18d60840210f4c8fa823010"
+    },
+    {
+      "path": "App/Assets.xcassets/AppIcon.appiconset/icon-60@2x.png",
+      "size": 9103,
+      "sha256": "180bcb8ebe64d322b17acbcab4899aa59fcbb3ea0963596baafc462e45f22f3f"
+    },
+    {
+      "path": "App/Assets.xcassets/AppIcon.appiconset/icon-1024.png",
+      "size": 92563,
+      "sha256": "f50980b13e7b6c69ce652ce7818cd623eac9b20713243ea528365577c971136a"
+    },
+    {
+      "path": "App/Assets.xcassets/AppIcon.appiconset/icon-29@2x.png",
+      "size": 3167,
+      "sha256": "9321e6427d624a0101d8aa2c14a63526d82a0479e9c13bfe3fea7a088b70a295"
+    },
+    {
+      "path": "App/Assets.xcassets/AppIcon.appiconset/icon-60@3x.png",
+      "size": 16391,
+      "sha256": "db7969c9414d96441f34bfe5fdd6b78e34342b8bc8510314ed3a7129567338e2"
+    },
+    {
+      "path": "App/Assets.xcassets/AppIcon.appiconset/icon-20@2x.png",
+      "size": 1753,
+      "sha256": "7559f20158c4a17ae2a2baddb3c4657671ba534a54c6f37b89a91b47f275c4e8"
+    },
+    {
+      "path": "App/Assets.xcassets/AppIcon.appiconset/icon-40@2x.png",
+      "size": 5101,
+      "sha256": "0bf6bc8d478e2559f21aeb55506bed7522357565dfe9c37558d31d538886449f"
+    },
+    {
+      "path": "App/Assets.xcassets/AppIcon.appiconset/icon-20@3x.png",
+      "size": 3368,
+      "sha256": "240bf120cd6c6be59f32993107e932e9a85a529466ee1ed71f5f5d358c7d882c"
+    },
+    {
+      "path": "App/Assets.xcassets/AppIcon.appiconset/icon-40@3x.png",
+      "size": 9103,
+      "sha256": "180bcb8ebe64d322b17acbcab4899aa59fcbb3ea0963596baafc462e45f22f3f"
+    },
+    {
+      "path": "App/Assets.xcassets/AppIcon.appiconset/icon-29@3x.png",
+      "size": 5747,
+      "sha256": "b9bb8616978fedfa8746797010ac309799d9b63f2635c476724a9e810b7cdf25"
+    },
+    {
+      "path": "App/Assets.xcassets/AppIcon.appiconset/Contents.json",
+      "size": 1141,
+      "sha256": "95a8c26f808c81b2f57c2b5ca91ed667e5ffa85912bf6159db8c76a09d057499"
+    }
+  ]
+}
