@@ -67,6 +67,6 @@ final class LayoutTests: XCTestCase {
     func testThreeDigitsNoFallbackFont() throws {let r=try HUDLayout.speed("100",width:1774,height:887,metrics:metrics());XCTAssertEqual(r.glyphs.map(\.text),["1","0","0"])}
     func testAllAtlasUVsStayInBounds() throws {for m in try metrics().values {XCTAssertEqual(m.uv.count,4);XCTAssertGreaterThanOrEqual(m.uv[0],0);XCTAssertLessThanOrEqual(m.uv[0]+m.uv[2],1);XCTAssertLessThanOrEqual(m.uv[1]+m.uv[3],1)}}
     func testUnknownSymbolFailsExplicitly() throws {XCTAssertThrowsError(try HUDLayout.line("X",metrics:metrics(),center:(0,0),capHeight:100,maxWidth:500))}
-    func testCarPreservesAspect() {let c=HUDLayout.car(width:2556,height:1179);XCTAssertEqual(c.width/c.height,1050.0/655.0,accuracy:1e-9);XCTAssertLessThan(c.width,2556*0.25)}
+    func testCarPreservesAspect() {let c=HUDLayout.car(width:2556,height:1179);XCTAssertEqual(c.width/c.height,1230.0/780.0,accuracy:1e-9);XCTAssertLessThan(c.width,2556*0.25)}
     func testGearDoesNotDisplaceSpeed() throws {let r=try HUDLayout.speed("72",width:1774,height:887,metrics:metrics());let b=HUDLayout.gearBadge(speedBounds:r.bounds,width:1774,height:887);XCTAssertEqual(r.bounds.midX,887,accuracy:1e-8);XCTAssertLessThan(b.width,r.bounds.width*0.25);XCTAssertLessThan(b.x+b.width,1774)}
 }
