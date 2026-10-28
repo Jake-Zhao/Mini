@@ -4,7 +4,8 @@ on:
     branches: [main]
     paths:
       - '.github/workflows/publish-companion-art.yml'
-      - 'tools/build_road_car_from_approved.py'
+      - 'tools/build_grounded_vehicle.py'
+      - 'tools/build_companion_states.py'
       - 'tools/build_assets.py'
       - 'Resources/Config/assets.json'
       - 'Config/scene.json'
@@ -28,7 +29,7 @@ jobs:
           persist-credentials: true
       - name: Python dependencies
         run: python3 -m pip install -r tools/requirements.txt
-      - name: Rebuild companion artwork from approved camera crop
+      - name: Build one registered vehicle and two matching tail-lamp states
         run: python3 tools/build_assets.py
       - name: Check pixel alignment and alpha
         run: python3 tools/check_assets.py
