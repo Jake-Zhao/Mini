@@ -75,17 +75,6 @@ def build_materials():
 # JAKE PERFORMANCE BRUSH GLYPH SYSTEM
 # 7 and 2 are extracted from the approved baseline's painted strokes.
 # Remaining glyphs share the same italic angle, stroke mass and distressed-paint logic.
-def approved_glyph(g):
-    refpath=R/'Reference/APPROVED.png'
-    if not refpath.exists(): raise FileNotFoundError('Reference/APPROVED.png is required from the final distribution package')
-    ref=np.asarray(Image.open(refpath).convert('RGB'),dtype=np.float32)/255
-    boxes={'7':(430,270,875,630),'2':(760,270,1235,630)}
-    x0,y0,x1,y1=boxes[g];crop=ref[y0:y1,x0:x1]
-    mn=crop.min(axis=2);mx=crop.max(axis=2)
-    alpha=np.clip((mn-.24)/.55,0,1)*np.clip(1-(mx-mn)*2.0,0,1)
-    alpha=gaussian_filter(alpha,.45);ys,xs=np.where(alpha>.045)
-    return alpha[max(0,ys.min()-6):ys.max()+7,max(0,xs.min()-6):xs.max()+7]
-
 def path_mask(g,scale=2):
     W,H=520*scale,480*scale;m=np.zeros((H,W),np.uint8);T=int(82*scale)
     def line(points,th=T): cv2.polylines(m,[np.array([(int(x*scale),int(y*scale)) for x,y in points],np.int32)],False,255,thickness=th,lineType=cv2.LINE_AA)
