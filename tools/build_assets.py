@@ -10,6 +10,7 @@ from PIL import Image, ImageDraw, ImageFilter
 from scipy.ndimage import gaussian_filter
 import cv2
 from build_grounded_vehicle import build as build_grounded_vehicle
+from build_companion_states import build as build_companion_states
 
 R=Path(__file__).resolve().parents[1]
 A=R/'Resources/Art'; S=R/'Source'
@@ -144,5 +145,5 @@ def pack():
     print('Compiled',len(manifest),'textures; runtime sprites premultiplied in linear light BEFORE filtering.')
 
 if __name__=='__main__':
-    build_materials();build_grounded_vehicle(A,R/'Reference/APPROVED.png',S/'Vehicle/runtime_registration.json');build_glyphs();pack()
+    build_materials();build_grounded_vehicle(A,R/'Reference/APPROVED.png',S/'Vehicle/runtime_registration.json');build_companion_states(A);build_glyphs();pack()
     shutil.copyfile(R/'Config/scene.json',R/'Resources/Config/scene.json')
