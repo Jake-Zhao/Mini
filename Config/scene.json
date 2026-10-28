@@ -3,7 +3,7 @@
     "tanHalfVerticalFOV": 0.3,
     "eyeHeightMetres": 1.22,
     "horizonY": 0.61,
-    "halfTunnelWidthMetres": 6.5,
+    "halfTunnelWidthMetres": 8.5,
     "ceilingHeightMetres": 4.2
   },
   "optics": {
@@ -29,7 +29,7 @@
     "textureWidth": 1230,
     "textureHeight": 780,
     "contactY": 0.806,
-    "sourceType": "single approved road camera silhouette; independent photographic wake; two tire contact anchors"
+    "sourceType": "photo registered to approved perspective; lane width accommodates full vehicle, photo proxy not 3D"
   },
   "hud": {
     "capHeightFraction": 0.36,
