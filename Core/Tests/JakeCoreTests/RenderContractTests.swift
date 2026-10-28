@@ -50,7 +50,7 @@ final class RenderContractTests: XCTestCase {
         let camera=SceneCamera()
         let width=1774.0, height=887.0
         let f=camera.vehicleFrame(width:width,height:height)
-        let foot=try XCTUnwrap(camera.project(x:4.30,y:0,z:10.0,aspect:width/height))
+        let foot=try XCTUnwrap(camera.project(x:5.77,y:0,z:13.0,aspect:width/height))
         XCTAssertEqual(f.width/f.height,1230.0/780.0,accuracy:1e-10)
         XCTAssertEqual((f.y+f.height*0.806)/height,foot.1,accuracy:1e-10)
         XCTAssertEqual((f.x+f.width*0.52)/width,foot.0,accuracy:1e-10)
@@ -58,6 +58,12 @@ final class RenderContractTests: XCTestCase {
         XCTAssertGreaterThan(f.x,width*0.68)
         XCTAssertLessThan(f.x+f.width,width)
         XCTAssertGreaterThan(f.y,height*0.5)
+        // The plane is registered to the 1774x887 approved photo's
+        // (1330,470)-(1740,730) source region, NOT a decorative HUD slot.
+        XCTAssertEqual(f.x,1330.0,accuracy:2.0)
+        XCTAssertEqual(f.y,470.0,accuracy:2.0)
+        XCTAssertEqual(f.width,410.0,accuracy:2.0)
+        XCTAssertEqual(f.height,260.0,accuracy:2.0)
     }
 
 }
