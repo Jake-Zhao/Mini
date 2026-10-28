@@ -29,6 +29,14 @@ def check():
     assert actual==expected,'Shader code rain is not UTF-8 for 一路平安'
     expectedFunctions=['sceneFragment','motionBlurFragment','environmentFragment','bloomExtractFragment','bloomHorizontalFragment','bloomVerticalFragment','outputFragment','glyphFragment','advanceSpray']
     for fn in expectedFunctions:assert fn in shader,fn
+    # Every digit, including 2 and 7, must follow ONE authoring process.
+    glyph_source=(ROOT/'tools/build_assets.py').read_text()
+    assert "def approved_glyph(" not in glyph_source
+    assert "a=path_mask(g)" in glyph_source
+    assert "if g=='2': line(" in glyph_source and "elif g=='7': line(" in glyph_source
+    scene_source=json.loads((ROOT/'Config/scene.json').read_text())
+    car=scene_source['vehicle'];camera=scene_source['camera']
+    assert car['positionXMetres'] + car['proxyWidthMetres']/2 < camera['halfTunnelWidthMetres'], 'Companion car extends into right tunnel wall'
     assets=json.loads((ROOT/'Resources/Config/assets.json').read_text())
     assert len(assets)==14
     byName={a['name']:a for a in assets}
