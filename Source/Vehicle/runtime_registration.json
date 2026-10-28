@@ -1,33 +1,44 @@
 {
   "source": "Reference/APPROVED.png",
-  "sourceCrop": [
-    1300,
-    480,
-    1725,
-    745
+  "method": "same-camera photographed car silhouette and wheel-contact water extraction",
+  "cropPixels": [
+    1330,
+    470,
+    1740,
+    730
   ],
-  "sourceCanvas": [
-    1774,
-    887
+  "runtimeSize": [
+    1230,
+    780
   ],
-  "runtimeCanvas": [
-    1050,
-    655
-  ],
-  "actualTireContacts": [
+  "wheelContactsSource": [
     [
-      1399,
-      672
+      1398,
+      659
     ],
     [
-      1501,
-      697
-    ],
-    [
-      1701,
-      693
+      1532,
+      675
     ]
   ],
-  "brakeChangedPixels": 20009,
-  "pose": "same approved roadway camera; one master for both states"
+  "wheelContactsUV": [
+    [
+      0.16585365853658537,
+      0.7269230769230769
+    ],
+    [
+      0.4926829268292683,
+      0.7884615384615384
+    ]
+  ],
+  "camera": {
+    "tanHalfVerticalFOV": 0.3,
+    "eyeHeightMetres": 1.22,
+    "horizonY": 0.61,
+    "carPositionXMetres": 5.77,
+    "carPositionZMetres": 13.0,
+    "proxyWidthMetres": 3.61,
+    "contactY": 0.806
+  },
+  "authenticity": "approved image based photographic impostor + speed-driven particle cues; NOT CFD/3-D wheel simulation"
 }
