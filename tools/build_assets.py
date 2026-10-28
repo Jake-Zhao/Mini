@@ -90,7 +90,9 @@ def path_mask(g,scale=2):
     W,H=520*scale,480*scale;m=np.zeros((H,W),np.uint8);T=int(82*scale)
     def line(points,th=T): cv2.polylines(m,[np.array([(int(x*scale),int(y*scale)) for x,y in points],np.int32)],False,255,thickness=th,lineType=cv2.LINE_AA)
     def ell(center,axes,start=0,end=360,th=T): cv2.ellipse(m,(int(center[0]*scale),int(center[1]*scale)),(int(axes[0]*scale),int(axes[1]*scale)),0,start,end,255,th,lineType=cv2.LINE_AA)
-    if g=='0': ell((255,240),(145,180))
+    if g=='2': line([(115,120),(170,75),(320,75),(370,145),(315,225),(115,410),(370,410)])
+    elif g=='7': line([(100,75),(375,75),(150,420)])
+    elif g=='0': ell((255,240),(145,180))
     elif g=='1': line([(175,125),(285,58),(220,430)]);line([(145,430),(315,430)],int(58*scale))
     elif g=='3': line([(110,80),(315,65),(360,130),(255,225),(345,250),(350,350),(295,410),(90,420)])
     elif g=='4': line([(300,55),(85,285),(350,285)]);line([(300,55),(230,430)])
@@ -115,7 +117,7 @@ def distress(a,g):
 def build_glyphs():
     glyphs=list('0123456789DNPR')+['-'];atlas=np.zeros((2048,4096,4),np.float32);metrics={};metadata=[]
     for i,g in enumerate(glyphs):
-        a=approved_glyph(g) if g in {'7','2'} else path_mask(g)
+        a=path_mask(g)
         a=distress(a,g);ys,xs=np.where(a>.025);a=a[:,max(0,xs.min()-8):xs.max()+9]
         tw=max(1,min(900,round(a.shape[1]*480/a.shape[0])));a=cv2.resize(a,(tw,480),interpolation=cv2.INTER_LANCZOS4)
         yy=np.linspace(0,1,480)[:,None];shade=.90+.10*np.cos((yy-.18)*math.pi)
@@ -123,7 +125,7 @@ def build_glyphs():
         base[...,1]+=np.clip((yy-.55)*.055,0,.03);rgba=np.dstack([np.clip(base,0,1)*a[...,None],a])
         x=(i%4)*1024+12;y=(i//4)*512+12;atlas[y:y+480,x:x+tw]=rgba;wid=tw*320/480
         metrics[g]={'index':i,'uv':[x/4096,y/2048,tw/4096,480/2048],'width':wid,'height':320,'advance':wid+8}
-        metadata.append({'glyph':g,'generator':'approved brush extraction' if g in {'7','2'} else 'JAKE PERFORMANCE BRUSH PATH','inkBounds':[0,0,tw,480]})
+        metadata.append({'glyph':g,'generator':'JAKE PERFORMANCE BRUSH PATH','inkBounds':[0,0,tw,480]})
     Image.fromarray(np.uint8(np.clip(atlas,0,1)*255+.5),'RGBA').save(A/'glyph_atlas.png')
     (R/'Resources/Config/glyphs.json').write_text(json.dumps(metrics,indent=2));(S/'Typography/metrics.json').write_text(json.dumps(metadata,indent=2))
     bit=Image.new('RGBA',(128,96));d=ImageDraw.Draw(bit);d.rounded_rectangle((13,14,49,80),radius=12,outline=(130,219,166,255),width=5);d.line([(82,30),(95,15),(95,79)],fill=(130,219,166,255),width=5);d.line((84,80,108,80),fill=(130,219,166,255),width=5);bit.save(A/'binary_glyphs.png')
