@@ -67,6 +67,10 @@ jobs:
           # A concurrent documentation/core commit may advance main while
           # the expensive texture compiler is running. Rebase generated assets
           # onto the latest main before pushing, rather than dropping the PNGs.
+          # The asset compiler also refreshes working-tree metadata that was
+          # deliberately not part of this focused image commit. Discard only
+          # those uncommitted generated changes before a safe fast-forward rebase.
+          git reset --hard HEAD
           git fetch origin main
           git rebase origin/main
           git push origin HEAD:main
