@@ -64,4 +64,9 @@ jobs:
           git -c user.name='github-actions[bot]' \
               -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
               commit -m "assets: publish road-calibrated companion vehicle and splash"
+          # A concurrent documentation/core commit may advance main while
+          # the expensive texture compiler is running. Rebase generated assets
+          # onto the latest main before pushing, rather than dropping the PNGs.
+          git fetch origin main
+          git rebase origin/main
           git push origin HEAD:main
