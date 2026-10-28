@@ -8,6 +8,8 @@ on:
       - 'tools/build_vehicle_review.py'
       - 'tools/build_companion_states.py'
       - 'tools/build_assets.py'
+      - 'tools/check_project.py'
+      - 'Config/scene.json'
       - 'Resources/Config/assets.json'
       - 'Config/scene.json'
       - 'tools/check_assets.py'
@@ -34,6 +36,8 @@ jobs:
         run: python3 tools/build_assets.py
       - name: Check pixel alignment and alpha
         run: python3 tools/check_assets.py
+      - name: Check digit source and wall-clearance contracts
+        run: python3 tools/check_project.py
       - name: Render labelled photographic wheel and brake review
         run: python3 tools/build_vehicle_review.py
       - name: Commit approved-scene vehicle, matched brake pair and wet-road assets
@@ -42,6 +46,7 @@ jobs:
           set -euo pipefail
           # Only source-derived preview PNGs, not huge generated GPU .jtex caches.
           git add -f -- \
+            Resources/Art/glyph_atlas.png \
             Resources/Art/car_body.png \
             Resources/Art/car_cruise.png \
             Resources/Art/car_brake.png \
